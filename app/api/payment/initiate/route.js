@@ -164,7 +164,7 @@ export async function POST(request) {
     console.log('Generated transaction ID:', tran_id);
 
     // Get base URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://img2prompt-three.vercel.app';
 
     // SSLCommerz payment data
     const paymentData = {

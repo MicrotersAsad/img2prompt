@@ -55,7 +55,7 @@ export default async function BlogPage() {
   let categories = ['All'];
 
   try {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://img2prompt-three.vercel.app';
     console.log('API Base URL:', API_BASE_URL);
     
     // Fetch blog posts - using the correct endpoint

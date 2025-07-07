@@ -11,7 +11,7 @@ export async function generateMetadata({ params }) {
     console.log(``, '🔍 Generating metadata for post:', params.slug);
     
   try {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://img2prompt-three.vercel.app';
     const res = await fetch(`${API_BASE_URL}/api/blog/public/posts/${params.slug}`, {
       cache: 'no-store',
     });
@@ -62,7 +62,7 @@ export default async function BlogPostPage({ params }) {
   let relatedPosts = [];
 
   try {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://img2prompt-three.vercel.app';
     
     // Fetch single post by slug
     console.log('📖 Fetching post:', `${API_BASE_URL}/api/blog/public/posts/${params.slug}`);
