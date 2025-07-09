@@ -244,34 +244,7 @@ const ImgPromptGenerator = ({authLoading }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="bg-white/10 backdrop-blur-lg border-b border-white/20">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <Lightbulb className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-white">AI Concept Studio</h1>
-                <p className="text-purple-200 text-sm">Concept to Image Prompt Generator</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              {user && (
-                <div className="text-right mr-4">
-                  <p className="text-white text-sm">Welcome, {user.email}</p>
-                  <p className="text-purple-200 text-xs">{usage?.plan} plan</p>
-                </div>
-              )}
-              <button
-                onClick={() => setIsCompact(!isCompact)}
-                className="p-2 text-purple-200 hover:text-white transition-colors"
-                title="Toggle view"
-              >
-                {isCompact ? <Monitor className="w-5 h-5" /> : <Smartphone className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
-        </div>
+     
       </div>
 
       <div className="max-w-7xl mx-auto p-4">
@@ -305,7 +278,7 @@ const ImgPromptGenerator = ({authLoading }) => {
           </div>
         )}
 
-        <div className={`grid gap-6 ${isCompact ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
+        <div className={`grid gap-6 ${isCompact ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-1'}`}>
           <div className="space-y-6">
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
               <h2 className="text-xl font-semibold text-white mb-2">Enter Your Concept</h2>
@@ -334,166 +307,142 @@ const ImgPromptGenerator = ({authLoading }) => {
               </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-              <h3 className="text-lg font-semibold text-white mb-3">Art Style</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {artStyles.map((style) => (
-                  <button
-                    key={style.id}
-                    onClick={() => setArtStyle(style.id)}
-                    className={`p-3 rounded-lg border transition-all text-left ${
-                      artStyle === style.id
-                        ? 'border-purple-400 bg-purple-500/20'
-                        : 'border-white/20 hover:border-purple-300 bg-black/20'
-                    }`}
-                  >
-                    <div className="flex items-center mb-1">
-                      <style.icon className="w-4 h-4 text-purple-300 mr-2" />
-                      <span className="text-white text-sm font-medium">{style.label}</span>
-                    </div>
-                    <p className="text-xs text-purple-200">{style.description}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <div>
+  {/* Art Style Section */}
+<div>
+  {/* Art Style and Mood & Atmosphere Section */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-3">Art Style</h3>
+      <select
+        value={artStyle}
+        onChange={(e) => setArtStyle(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+      >
+        {artStyles.map((style) => (
+          <option key={style.id} value={style.id} className="bg-gray-800">
+            {style.label} - {style.description}
+          </option>
+        ))}
+      </select>
+    </div>
 
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-              <h3 className="text-lg font-semibold text-white mb-3">Mood & Atmosphere</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {moods.map((moodOption) => (
-                  <button
-                    key={moodOption.id}
-                    onClick={() => setMood(moodOption.id)}
-                    className={`p-3 rounded-lg border transition-all text-left ${
-                      mood === moodOption.id
-                        ? 'border-purple-400 bg-purple-500/20'
-                        : 'border-white/20 hover:border-purple-300 bg-black/20'
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <div className={`w-6 h-6 rounded-full bg-gradient-to-r ${moodOption.color} flex items-center justify-center mr-2`}>
-                        <moodOption.icon className="w-3 h-3 text-white" />
-                      </div>
-                      <span className="text-white text-sm font-medium">{moodOption.label}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-3">Mood & Atmosphere</h3>
+      <select
+        value={mood}
+        onChange={(e) => setMood(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+      >
+        {moods.map((moodOption) => (
+          <option key={moodOption.id} value={moodOption.id} className="bg-gray-800">
+            {moodOption.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-                <h3 className="text-lg font-semibold text-white mb-3">Lighting</h3>
-                <select
-                  value={lighting}
-                  onChange={(e) => setLighting(e.target.value)}
-                  className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-                >
-                  {lightingOptions.map((option) => (
-                    <option key={option.id} value={option.id} className="bg-gray-800">
-                      {option.label} - {option.description}
-                    </option>
-                  ))}
-                </select>
-              </div>
+  {/* Lighting and Composition Section */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-3">Lighting</h3>
+      <select
+        value={lighting}
+        onChange={(e) => setLighting(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+      >
+        {lightingOptions.map((option) => (
+          <option key={option.id} value={option.id} className="bg-gray-800">
+            {option.label} - {option.description}
+          </option>
+        ))}
+      </select>
+    </div>
 
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-                <h3 className="text-lg font-semibold text-white mb-3">Composition</h3>
-                <select
-                  value={composition}
-                  onChange={(e) => setComposition(e.target.value)}
-                  className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-                >
-                  {compositions.map((comp) => (
-                    <option key={comp.id} value={comp.id} className="bg-gray-800">
-                      {comp.label} - {comp.description}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-3">Composition</h3>
+      <select
+        value={composition}
+        onChange={(e) => setComposition(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+      >
+        {compositions.map((comp) => (
+          <option key={comp.id} value={comp.id} className="bg-gray-800">
+            {comp.label} - {comp.description}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
 
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-              <h3 className="text-lg font-semibold text-white mb-3">Color Scheme</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {colorSchemes.map((scheme) => (
-                  <button
-                    key={scheme.id}
-                    onClick={() => setColorScheme(scheme.id)}
-                    className={`p-3 rounded-lg border transition-all text-left ${
-                      colorScheme === scheme.id
-                        ? 'border-purple-400 bg-purple-500/20'
-                        : 'border-white/20 hover:border-purple-300 bg-black/20'
-                    }`}
-                  >
-                    <span className="text-white text-sm font-medium block">{scheme.label}</span>
-                    <p className="text-xs text-purple-200">{scheme.description}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
+  {/* Color Scheme and Target Platform Section */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-3">Color Scheme</h3>
+      <select
+        value={colorScheme}
+        onChange={(e) => setColorScheme(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+      >
+        {colorSchemes.map((scheme) => (
+          <option key={scheme.id} value={scheme.id} className="bg-gray-800">
+            {scheme.label} - {scheme.description}
+          </option>
+        ))}
+      </select>
+    </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-                <h3 className="text-lg font-semibold text-white mb-3">Target Platform</h3>
-                <div className="space-y-2">
-                  {promptTargets.map((target) => (
-                    <button
-                      key={target.id}
-                      onClick={() => setPromptTarget(target.id)}
-                      className={`w-full p-3 rounded-lg border transition-all text-left ${
-                        promptTarget === target.id
-                          ? 'border-purple-400 bg-purple-500/20'
-                          : 'border-white/20 hover:border-purple-300 bg-black/20'
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <div className={`w-6 h-6 rounded bg-gradient-to-r ${target.color} flex items-center justify-center mr-3`}>
-                          <target.icon className="w-3 h-3 text-white" />
-                        </div>
-                        <div>
-                          <span className="text-white text-sm font-medium">{target.label}</span>
-                          <p className="text-xs text-purple-200">{target.description}</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-3">Target Platform</h3>
+      <select
+        value={promptTarget}
+        onChange={(e) => setPromptTarget(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+      >
+        {promptTargets.map((target) => (
+          <option key={target.id} value={target.id} className="bg-gray-800">
+            {target.label} - {target.description}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
 
-              <div className="space-y-4">
-                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-                  <h3 className="text-lg font-semibold text-white mb-3">Language</h3>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-                  >
-                    {languages.map((lang) => (
-                      <option key={lang.value} value={lang.value} className="bg-gray-800">
-                        {lang.flag} {lang.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+  {/* Language and Detail Level Section */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-3">Language</h3>
+      <select
+        value={language}
+        onChange={(e) => setLanguage(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+      >
+        {languages.map((lang) => (
+          <option key={lang.value} value={lang.value} className="bg-gray-800">
+            {lang.flag} {lang.label}
+          </option>
+        ))}
+      </select>
+    </div>
 
-                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-                  <h3 className="text-lg font-semibold text-white mb-3">Detail Level</h3>
-                  <select
-                    value={detailLevel}
-                    onChange={(e) => setDetailLevel(e.target.value)}
-                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-                  >
-                    {detailLevels.map((level) => (
-                      <option key={level.id} value={level.id} className="bg-gray-800">
-                        {level.label} - {level.description}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-3">Detail Level</h3>
+      <select
+        value={detailLevel}
+        onChange={(e) => setDetailLevel(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+      >
+        {detailLevels.map((level) => (
+          <option key={level.id} value={level.id} className="bg-gray-800">
+            {level.label} - {level.description}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
+</div>
+</div>
             <button
               onClick={generatePrompt}
               disabled={isGenerating || !concept.trim() || !user || hasReachedLimit()}

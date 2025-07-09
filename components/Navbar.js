@@ -64,7 +64,7 @@ const Navbar = () => {
       name: 'Image to Prompt',
       description: 'Convert images into detailed prompts',
       icon: Image,
-      href: 'image-to-prompt',
+      href: 'img-to-prompt',
       color: 'from-blue-500 to-cyan-500',
       available: true
     },
@@ -85,10 +85,10 @@ const Navbar = () => {
       available: true
     },
     {
-      name: 'Smart Generator',
+      name: 'Image Prompt Generator',
       description: 'AI-powered prompt generation',
       icon: Zap,
-      href: 'smart-generator',
+      href: 'image-prompt-generator',
       color: 'from-green-500 to-emerald-500',
       available: true
     },
@@ -163,7 +163,7 @@ const Navbar = () => {
           <Link href="/" className="flex items-center">
             <Sparkles className="w-8 h-8 text-yellow-400 mr-2" />
             <span className="text-xl font-bold text-white">
-              {safeT('title', 'AI Prompt Studio')}
+              {safeT('title', 'Image to Prompt')}
             </span>
           </Link>
 

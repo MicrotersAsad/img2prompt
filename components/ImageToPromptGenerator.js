@@ -302,13 +302,9 @@ const ImageToPromptGenerator = ({authLoading }) => {
   }
 
   return (
-       <Layout>
+     
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-
-
-
-
-      <div className="max-w-7xl mx-auto p-4">
+ <div className="max-w-7xl mx-auto p-4">
         {/* Usage Display */}
         {user && usage && (
           <div className="mb-6 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 rounded-xl p-4 border border-purple-500/20">
@@ -340,7 +336,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
           </div>
         )}
 
-        <div className={`grid gap-6 ${isCompact ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
+        <div className={`grid gap-6 ${isCompact ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-1'}`}>
           {/* Left Column - Input */}
           <div className="space-y-6">
             {/* Input Image Section */}
@@ -467,99 +463,149 @@ const ImageToPromptGenerator = ({authLoading }) => {
             </div>
 
             {/* Settings */}
-            <div className="space-y-6">
-              {/* Output Language */}
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-                <h3 className="text-lg font-semibold text-white mb-3">Output Language</h3>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-                >
-                  {languages.map((lang) => (
-                    <option key={lang.value} value={lang.value} className="bg-gray-800">
-                      {lang.flag} {lang.label} ({lang.native})
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <div className="space-y-6">
+  {/* Settings Grid - 2 columns */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {/* Output Language */}
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-3">Output Language</h3>
+      <select
+        value={language}
+        onChange={(e) => setLanguage(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+      >
+        {languages.map((lang) => (
+          <option key={lang.value} value={lang.value} className="bg-gray-800">
+            {lang.flag} {lang.label} ({lang.native})
+          </option>
+        ))}
+      </select>
+    </div>
 
-              {/* Prompt Target */}
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-                <h3 className="text-lg font-semibold text-white mb-3">Prompt Target</h3>
-                <p className="text-sm text-purple-200 mb-4">Select the AI platform you're generating prompts for</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {promptTargets.map((target) => (
-                    <button
-                      key={target.id}
-                      onClick={() => setPromptTarget(target.id)}
-                      className={`p-4 rounded-xl border-2 transition-all text-left ${
-                        promptTarget === target.id
-                          ? 'border-purple-400 bg-purple-500/20 shadow-lg'
-                          : 'border-white/20 hover:border-purple-300 bg-black/20'
-                      }`}
-                    >
-                      <div className="flex items-center mb-2">
-                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${target.color} flex items-center justify-center mr-3`}>
-                          <target.icon className="w-4 h-4 text-white" />
-                        </div>
-                        <div className="text-white font-medium">{target.label}</div>
-                      </div>
-                      <p className="text-xs text-purple-200">{target.description}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
+    {/* Word Count */}
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+      <h3 className="text-lg font-semibold text-white mb-4">Word Count</h3>
+      <div className="space-y-4">
+        <input
+          type="range"
+          min="50"
+          max="300"
+          value={wordCount}
+          onChange={(e) => setWordCount(parseInt(e.target.value))}
+          className="w-full h-2 bg-black/20 rounded-lg appearance-none cursor-pointer slider"
+        />
+        <div className="flex justify-between text-sm text-purple-200">
+          <span>Brief (50)</span>
+          <span className="font-medium text-white">≈ {wordCount} words</span>
+          <span>Detailed (300)</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-              {/* Scene/Style */}
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-                <h3 className="text-lg font-semibold text-white mb-3">Scene/Style</h3>
-                <p className="text-sm text-purple-200 mb-4">Choose the type of content to optimize your prompt</p>
-                <div className="space-y-2">
-                  {sceneStyles.map((style) => (
-                    <button
-                      key={style.id}
-                      onClick={() => setSceneStyle(style.id)}
-                      className={`w-full p-3 rounded-lg border transition-all text-left ${
-                        sceneStyle === style.id
-                          ? 'border-purple-400 bg-purple-500/20'
-                          : 'border-white/20 hover:border-purple-300 bg-black/20'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <style.icon className="w-5 h-5 text-purple-300 mr-3" />
-                          <div>
-                            <div className="text-white font-medium">{style.label}</div>
-                            <div className="text-xs text-purple-200">{style.description}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+  {/* Prompt Target - Full Width */}
+{/* Settings Grid - 2 columns */}
+{/* Settings Grid - 2 columns with Dropdowns */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {/* Prompt Target */}
+  <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+    <h3 className="text-lg font-semibold text-white mb-3">Prompt Target</h3>
+    <p className="text-sm text-purple-200 mb-4">Select the AI platform you're generating prompts for</p>
+    
+    <div className="relative">
+      <select
+        value={promptTarget}
+        onChange={(e) => setPromptTarget(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white appearance-none cursor-pointer"
+      >
+        {promptTargets.map((target) => (
+          <option key={target.id} value={target.id} className="bg-gray-800 text-white">
+            {target.label} - {target.description}
+          </option>
+        ))}
+      </select>
+      
+      {/* Custom dropdown arrow */}
+      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+        <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
 
-              {/* Word Count */}
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-                <h3 className="text-lg font-semibold text-white mb-4">Word Count</h3>
-                <div className="space-y-4">
-                  <input
-                    type="range"
-                    min="50"
-                    max="300"
-                    value={wordCount}
-                    onChange={(e) => setWordCount(parseInt(e.target.value))}
-                    className="w-full h-2 bg-black/20 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                  <div className="flex justify-between text-sm text-purple-200">
-                    <span>Brief (50)</span>
-                    <span className="font-medium text-white">≈ {wordCount} words</span>
-                    <span>Detailed (300)</span>
-                  </div>
+    {/* Selected Target Preview */}
+    {promptTarget && (
+      <div className="mt-4 p-3 bg-black/20 rounded-lg border border-purple-500/30">
+        <div className="flex items-center">
+          {(() => {
+            const selectedTarget = promptTargets.find(t => t.id === promptTarget);
+            if (!selectedTarget) return null;
+            return (
+              <>
+                <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${selectedTarget.color} flex items-center justify-center mr-3`}>
+                  <selectedTarget.icon className="w-4 h-4 text-white" />
                 </div>
-              </div>
-            </div>
+                <div>
+                  <div className="text-white font-medium text-sm">{selectedTarget.label}</div>
+                  <div className="text-xs text-purple-200">{selectedTarget.description}</div>
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      </div>
+    )}
+  </div>
+
+  {/* Scene/Style */}
+  <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+    <h3 className="text-lg font-semibold text-white mb-3">Scene/Style</h3>
+    <p className="text-sm text-purple-200 mb-4">Choose the type of content to optimize your prompt</p>
+    
+    <div className="relative">
+      <select
+        value={sceneStyle}
+        onChange={(e) => setSceneStyle(e.target.value)}
+        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white appearance-none cursor-pointer"
+      >
+        {sceneStyles.map((style) => (
+          <option key={style.id} value={style.id} className="bg-gray-800 text-white">
+            {style.label} - {style.description}
+          </option>
+        ))}
+      </select>
+      
+      {/* Custom dropdown arrow */}
+      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+        <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+
+    {/* Selected Style Preview */}
+    {sceneStyle && (
+      <div className="mt-4 p-3 bg-black/20 rounded-lg border border-purple-500/30">
+        <div className="flex items-center">
+          {(() => {
+            const selectedStyle = sceneStyles.find(s => s.id === sceneStyle);
+            if (!selectedStyle) return null;
+            return (
+              <>
+                <selectedStyle.icon className="w-6 h-6 text-purple-300 mr-3" />
+                <div>
+                  <div className="text-white font-medium text-sm">{selectedStyle.label}</div>
+                  <div className="text-xs text-purple-200">{selectedStyle.description}</div>
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+</div>
 
             {/* Generate Button */}
             <button
@@ -708,7 +754,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
         }
       `}</style>
     </div>
-       </Layout>
+     
   );
 };
 
