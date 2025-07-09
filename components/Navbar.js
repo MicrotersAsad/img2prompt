@@ -2,7 +2,23 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Sparkles, User, LogOut, Settings, History, ChevronDown, Menu, X } from 'lucide-react';
+import { 
+  Sparkles, 
+  User, 
+  LogOut, 
+  Settings, 
+  History, 
+  ChevronDown, 
+  Menu, 
+  X,
+  Wand2,
+  Image,
+  Zap,
+  Video,
+  Mic,
+  Palette,
+  Wrench
+} from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -12,9 +28,11 @@ const Navbar = () => {
   const { t, ready } = useTranslation();
   const { user, logout } = useAuth(); // Get logout function from useAuth
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showToolsDropdown, setShowToolsDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef(null);
+  const toolsDropdownRef = useRef(null);
 
   // SSR hydration fix
   useEffect(() => {
@@ -29,6 +47,9 @@ const Navbar = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
+      if (toolsDropdownRef.current && !toolsDropdownRef.current.contains(event.target)) {
+        setShowToolsDropdown(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -36,6 +57,58 @@ const Navbar = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isClient]);
+
+  // Tools data
+  const tools = [
+    {
+      name: 'Image to Prompt',
+      description: 'Convert images into detailed prompts',
+      icon: Image,
+      href: 'image-to-prompt',
+      color: 'from-blue-500 to-cyan-500',
+      available: true
+    },
+    {
+      name: 'Prompt to Image',
+      description: 'Generate images from text prompts',
+      icon: Sparkles,
+      href: 'prompt-to-image',
+      color: 'from-purple-500 to-pink-500',
+      available: true
+    },
+    {
+      name: 'Prompt Enhancer',
+      description: 'Enhance and optimize your prompts',
+      icon: Wand2,
+      href: 'prompt-enhancer',
+      color: 'from-yellow-500 to-orange-500',
+      available: true
+    },
+    {
+      name: 'Smart Generator',
+      description: 'AI-powered prompt generation',
+      icon: Zap,
+      href: 'smart-generator',
+      color: 'from-green-500 to-emerald-500',
+      available: true
+    },
+    {
+      name: 'Video to Prompt',
+      description: 'Extract prompts from videos',
+      icon: Video,
+      href: 'video-to-prompt',
+      color: 'from-red-500 to-orange-500',
+      available: false
+    },
+    {
+      name: 'Audio to Prompt',
+      description: 'Convert audio to visual prompts',
+      icon: Mic,
+      href: 'audio-to-prompt',
+      color: 'from-indigo-500 to-purple-600',
+      available: false
+    }
+  ];
 
   const handleLogout = () => {
     if (!isClient) return;
@@ -67,6 +140,10 @@ const Navbar = () => {
     setShowDropdown(false);
   };
 
+  const closeToolsDropdown = () => {
+    setShowToolsDropdown(false);
+  };
+
   // Safe translation function with fallbacks
   const safeT = (key, fallback) => {
     if (!ready || !isClient) return fallback;
@@ -95,6 +172,80 @@ const Navbar = () => {
             <Link href="/" className="text-white hover:text-yellow-400 transition-colors">
               {safeT('home', 'Home')}
             </Link>
+
+            {/* Tools Dropdown */}
+            <div className="relative" ref={toolsDropdownRef}>
+              <button
+                onClick={() => setShowToolsDropdown(!showToolsDropdown)}
+                className="flex items-center space-x-1 text-white hover:text-yellow-400 transition-colors focus:outline-none"
+              >
+              
+                <span>Tools</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${showToolsDropdown ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Tools Dropdown Menu */}
+              {showToolsDropdown && (
+                <div className="absolute left-0 mt-2 w-80 bg-gradient-to-br from-slate-900/95 to-purple-900/95 backdrop-blur-lg rounded-xl shadow-2xl border border-purple-500/30 overflow-hidden">
+                  <div className="p-4 border-b border-purple-500/30">
+                    <h3 className="text-white font-semibold text-sm flex items-center gap-2">
+                      <Palette className="w-4 h-4 text-purple-300" />
+                      AI Tools
+                    </h3>
+                    <p className="text-purple-200 text-xs mt-1">Professional AI prompt tools</p>
+                  </div>
+                  
+                  <div className="py-2">
+                    {tools.map((tool, index) => {
+                      const IconComponent = tool.icon;
+                      return (
+                        <Link
+                          key={index}
+                          href={tool.available ? tool.href : '#'}
+                          className={`group flex items-center px-4 py-3 transition-all ${
+                            tool.available 
+                              ? 'hover:bg-purple-800/50 text-white' 
+                              : 'text-gray-400 cursor-not-allowed'
+                          }`}
+                          onClick={tool.available ? closeToolsDropdown : (e) => e.preventDefault()}
+                        >
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 bg-gradient-to-r ${tool.color} ${!tool.available && 'opacity-50 grayscale'}`}>
+                            <IconComponent className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-medium text-sm">{tool.name}</h4>
+                              {!tool.available && (
+                                <span className="text-xs bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded-full">
+                                  Soon
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-purple-200 mt-0.5">{tool.description}</p>
+                          </div>
+                          {tool.available && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <ChevronDown className="w-4 h-4 text-purple-300 -rotate-90" />
+                            </div>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+
+                  <div className="p-4 border-t border-purple-500/30 bg-gradient-to-r from-purple-900/50 to-pink-900/50">
+                    <Link
+                      href="/tools"
+                      className="block text-center text-sm text-purple-200 hover:text-white transition-colors"
+                      onClick={closeToolsDropdown}
+                    >
+                      View All Tools →
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Link href="/blog" className="text-white hover:text-yellow-400 transition-colors">
               {safeT('blog', 'Blog')}
             </Link>
@@ -214,6 +365,46 @@ const Navbar = () => {
               >
                 {safeT('home', 'Home')}
               </Link>
+
+              {/* Mobile Tools Section */}
+              <div className="px-3 py-2">
+                <h3 className="text-purple-200 font-semibold text-sm mb-2 flex items-center gap-2">
+                 
+                  Tools
+                </h3>
+                <div className="space-y-1 ml-2">
+                  {tools.map((tool, index) => {
+                    const IconComponent = tool.icon;
+                    return (
+                      <Link
+                        key={index}
+                        href={tool.available ? tool.href : '#'}
+                        className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
+                          tool.available 
+                            ? 'text-white hover:bg-purple-800/50' 
+                            : 'text-gray-400 cursor-not-allowed'
+                        }`}
+                        onClick={tool.available ? closeMobileMenu : (e) => e.preventDefault()}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center mr-3 bg-gradient-to-r ${tool.color} ${!tool.available && 'opacity-50 grayscale'}`}>
+                          <IconComponent className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{tool.name}</span>
+                            {!tool.available && (
+                              <span className="text-xs bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded-full">
+                                Soon
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+
               <Link 
                 href="/blog" 
                 className="block px-3 py-2 text-white hover:text-yellow-400 transition-colors"
