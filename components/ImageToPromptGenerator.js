@@ -114,10 +114,13 @@ const ImageToPromptGenerator = ({authLoading }) => {
     { id: 'artistic', label: 'Artistic', icon: Wand2, description: 'Abstract and creative' },
   ];
 
-  // Handle paste functionality
+  // Enhanced paste functionality
   useEffect(() => {
-    const handlePaste = async (e) => {
+    const handleGlobalPaste = async (e) => {
+      // Only work if we're on paste tab and no input is focused
       if (uploadMethod !== 'paste') return;
+      if (document.activeElement?.tagName === 'INPUT' || 
+          document.activeElement?.tagName === 'TEXTAREA') return;
       
       const items = e.clipboardData?.items;
       if (!items) return;
@@ -135,9 +138,16 @@ const ImageToPromptGenerator = ({authLoading }) => {
       }
     };
 
-    if (uploadMethod === 'paste') {
-      document.addEventListener('paste', handlePaste);
-      return () => document.removeEventListener('paste', handlePaste);
+    document.addEventListener('paste', handleGlobalPaste);
+    return () => document.removeEventListener('paste', handleGlobalPaste);
+  }, [uploadMethod]);
+
+  // Auto-focus paste area when paste tab is selected
+  useEffect(() => {
+    if (uploadMethod === 'paste' && pasteAreaRef.current) {
+      setTimeout(() => {
+        pasteAreaRef.current?.focus();
+      }, 100);
     }
   }, [uploadMethod]);
 
@@ -162,7 +172,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
     reader.readAsDataURL(file);
 
     setSelectedImage(file);
-    setGeneratedPrompt('');
+    setGeneratedPrompt(''); // Clear previous prompt
   };
 
   const handleImageUrl = () => {
@@ -172,7 +182,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
     }
     setImagePreview(imageUrl);
     setSelectedImage({ url: imageUrl });
-    setGeneratedPrompt('');
+    setGeneratedPrompt(''); // Clear previous prompt
     setError('');
   };
 
@@ -302,9 +312,8 @@ const ImageToPromptGenerator = ({authLoading }) => {
   }
 
   return (
-     
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
- <div className="max-w-7xl mx-auto p-4">
+      <div className="max-w-7xl mx-auto p-4">
         {/* Usage Display */}
         {user && usage && (
           <div className="mb-6 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 rounded-xl p-4 border border-purple-500/20">
@@ -336,7 +345,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
           </div>
         )}
 
-        <div className={`grid gap-6 ${isCompact ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-1'}`}>
+        <div className={`grid gap-6 ${generatedPrompt ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
           {/* Left Column - Input */}
           <div className="space-y-6">
             {/* Input Image Section */}
@@ -419,7 +428,25 @@ const ImageToPromptGenerator = ({authLoading }) => {
                 !imagePreview ? (
                   <div
                     ref={pasteAreaRef}
-                    className="border-2 border-dashed border-purple-300/50 rounded-xl p-8 text-center bg-black/20 hover:border-purple-400 transition-all"
+                    tabIndex={0}
+                    className="border-2 border-dashed border-purple-300/50 rounded-xl p-8 text-center bg-black/20 hover:border-purple-400 transition-all focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    onPaste={async (e) => {
+                      const items = e.clipboardData?.items;
+                      if (!items) return;
+
+                      for (let i = 0; i < items.length; i++) {
+                        const item = items[i];
+                        if (item.type.indexOf('image') !== -1) {
+                          e.preventDefault();
+                          const file = item.getAsFile();
+                          if (file) {
+                            handleImageSelect(file);
+                          }
+                          break;
+                        }
+                      }
+                    }}
+                    onClick={() => pasteAreaRef.current?.focus()}
                   >
                     <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Clipboard className="w-8 h-8 text-white" />
@@ -430,8 +457,11 @@ const ImageToPromptGenerator = ({authLoading }) => {
                     <p className="text-sm text-purple-200 mb-2">
                       Copy an image (Ctrl+C) and paste it here (Ctrl+V)
                     </p>
-                    <p className="text-xs text-purple-300">
+                    <p className="text-xs text-purple-300 mb-2">
                       Works with screenshots, copied images from browsers, etc.
+                    </p>
+                    <p className="text-xs text-green-300">
+                      💡 Click here first, then paste your image
                     </p>
                   </div>
                 ) : (
@@ -463,149 +493,147 @@ const ImageToPromptGenerator = ({authLoading }) => {
             </div>
 
             {/* Settings */}
-        <div className="space-y-6">
-  {/* Settings Grid - 2 columns */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {/* Output Language */}
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-3">Output Language</h3>
-      <select
-        value={language}
-        onChange={(e) => setLanguage(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-      >
-        {languages.map((lang) => (
-          <option key={lang.value} value={lang.value} className="bg-gray-800">
-            {lang.flag} {lang.label} ({lang.native})
-          </option>
-        ))}
-      </select>
-    </div>
-
-    {/* Word Count */}
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-4">Word Count</h3>
-      <div className="space-y-4">
-        <input
-          type="range"
-          min="50"
-          max="300"
-          value={wordCount}
-          onChange={(e) => setWordCount(parseInt(e.target.value))}
-          className="w-full h-2 bg-black/20 rounded-lg appearance-none cursor-pointer slider"
-        />
-        <div className="flex justify-between text-sm text-purple-200">
-          <span>Brief (50)</span>
-          <span className="font-medium text-white">≈ {wordCount} words</span>
-          <span>Detailed (300)</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/* Prompt Target - Full Width */}
-{/* Settings Grid - 2 columns */}
-{/* Settings Grid - 2 columns with Dropdowns */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-  {/* Prompt Target */}
-  <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-    <h3 className="text-lg font-semibold text-white mb-3">Prompt Target</h3>
-    <p className="text-sm text-purple-200 mb-4">Select the AI platform you're generating prompts for</p>
-    
-    <div className="relative">
-      <select
-        value={promptTarget}
-        onChange={(e) => setPromptTarget(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white appearance-none cursor-pointer"
-      >
-        {promptTargets.map((target) => (
-          <option key={target.id} value={target.id} className="bg-gray-800 text-white">
-            {target.label} - {target.description}
-          </option>
-        ))}
-      </select>
-      
-      {/* Custom dropdown arrow */}
-      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-        <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-    </div>
-
-    {/* Selected Target Preview */}
-    {promptTarget && (
-      <div className="mt-4 p-3 bg-black/20 rounded-lg border border-purple-500/30">
-        <div className="flex items-center">
-          {(() => {
-            const selectedTarget = promptTargets.find(t => t.id === promptTarget);
-            if (!selectedTarget) return null;
-            return (
-              <>
-                <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${selectedTarget.color} flex items-center justify-center mr-3`}>
-                  <selectedTarget.icon className="w-4 h-4 text-white" />
+            <div className="space-y-6">
+              {/* Settings Grid - 2 columns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Output Language */}
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Output Language</h3>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+                  >
+                    {languages.map((lang) => (
+                      <option key={lang.value} value={lang.value} className="bg-gray-800">
+                        {lang.flag} {lang.label} ({lang.native})
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div>
-                  <div className="text-white font-medium text-sm">{selectedTarget.label}</div>
-                  <div className="text-xs text-purple-200">{selectedTarget.description}</div>
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      </div>
-    )}
-  </div>
 
-  {/* Scene/Style */}
-  <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-    <h3 className="text-lg font-semibold text-white mb-3">Scene/Style</h3>
-    <p className="text-sm text-purple-200 mb-4">Choose the type of content to optimize your prompt</p>
-    
-    <div className="relative">
-      <select
-        value={sceneStyle}
-        onChange={(e) => setSceneStyle(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white appearance-none cursor-pointer"
-      >
-        {sceneStyles.map((style) => (
-          <option key={style.id} value={style.id} className="bg-gray-800 text-white">
-            {style.label} - {style.description}
-          </option>
-        ))}
-      </select>
-      
-      {/* Custom dropdown arrow */}
-      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-        <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-    </div>
-
-    {/* Selected Style Preview */}
-    {sceneStyle && (
-      <div className="mt-4 p-3 bg-black/20 rounded-lg border border-purple-500/30">
-        <div className="flex items-center">
-          {(() => {
-            const selectedStyle = sceneStyles.find(s => s.id === sceneStyle);
-            if (!selectedStyle) return null;
-            return (
-              <>
-                <selectedStyle.icon className="w-6 h-6 text-purple-300 mr-3" />
-                <div>
-                  <div className="text-white font-medium text-sm">{selectedStyle.label}</div>
-                  <div className="text-xs text-purple-200">{selectedStyle.description}</div>
+                {/* Word Count */}
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-4">Word Count</h3>
+                  <div className="space-y-4">
+                    <input
+                      type="range"
+                      min="50"
+                      max="300"
+                      value={wordCount}
+                      onChange={(e) => setWordCount(parseInt(e.target.value))}
+                      className="w-full h-2 bg-black/20 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                    <div className="flex justify-between text-sm text-purple-200">
+                      <span>Brief (50)</span>
+                      <span className="font-medium text-white">≈ {wordCount} words</span>
+                      <span>Detailed (300)</span>
+                    </div>
+                  </div>
                 </div>
-              </>
-            );
-          })()}
-        </div>
-      </div>
-    )}
-  </div>
-</div>
-</div>
+              </div>
+
+              {/* Settings Grid - 2 columns with Dropdowns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Prompt Target */}
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Prompt Target</h3>
+                  <p className="text-sm text-purple-200 mb-4">Select the AI platform you're generating prompts for</p>
+                  
+                  <div className="relative">
+                    <select
+                      value={promptTarget}
+                      onChange={(e) => setPromptTarget(e.target.value)}
+                      className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white appearance-none cursor-pointer"
+                    >
+                      {promptTargets.map((target) => (
+                        <option key={target.id} value={target.id} className="bg-gray-800 text-white">
+                          {target.label} - {target.description}
+                        </option>
+                      ))}
+                    </select>
+                    
+                    {/* Custom dropdown arrow */}
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Selected Target Preview */}
+                  {promptTarget && (
+                    <div className="mt-4 p-3 bg-black/20 rounded-lg border border-purple-500/30">
+                      <div className="flex items-center">
+                        {(() => {
+                          const selectedTarget = promptTargets.find(t => t.id === promptTarget);
+                          if (!selectedTarget) return null;
+                          return (
+                            <>
+                              <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${selectedTarget.color} flex items-center justify-center mr-3`}>
+                                <selectedTarget.icon className="w-4 h-4 text-white" />
+                              </div>
+                              <div>
+                                <div className="text-white font-medium text-sm">{selectedTarget.label}</div>
+                                <div className="text-xs text-purple-200">{selectedTarget.description}</div>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Scene/Style */}
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Scene/Style</h3>
+                  <p className="text-sm text-purple-200 mb-4">Choose the type of content to optimize your prompt</p>
+                  
+                  <div className="relative">
+                    <select
+                      value={sceneStyle}
+                      onChange={(e) => setSceneStyle(e.target.value)}
+                      className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white appearance-none cursor-pointer"
+                    >
+                      {sceneStyles.map((style) => (
+                        <option key={style.id} value={style.id} className="bg-gray-800 text-white">
+                          {style.label} - {style.description}
+                        </option>
+                      ))}
+                    </select>
+                    
+                    {/* Custom dropdown arrow */}
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Selected Style Preview */}
+                  {sceneStyle && (
+                    <div className="mt-4 p-3 bg-black/20 rounded-lg border border-purple-500/30">
+                      <div className="flex items-center">
+                        {(() => {
+                          const selectedStyle = sceneStyles.find(s => s.id === sceneStyle);
+                          if (!selectedStyle) return null;
+                          return (
+                            <>
+                              <selectedStyle.icon className="w-6 h-6 text-purple-300 mr-3" />
+                              <div>
+                                <div className="text-white font-medium text-sm">{selectedStyle.label}</div>
+                                <div className="text-xs text-purple-200">{selectedStyle.description}</div>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
 
             {/* Generate Button */}
             <button
@@ -641,13 +669,13 @@ const ImageToPromptGenerator = ({authLoading }) => {
             </button>
           </div>
 
-          {/* Right Column - Output */}
-          <div className="space-y-6">
-            {/* Generated Prompt */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl h-full">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-white">Generated Prompt</h2>
-                {generatedPrompt && (
+          {/* Right Column - Output (Only show when prompt is generated) */}
+          {generatedPrompt && (
+            <div className="space-y-6">
+              {/* Generated Prompt */}
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl h-full">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-white">Generated Prompt</h2>
                   <button
                     onClick={copyToClipboard}
                     className="flex items-center gap-2 px-4 py-2 bg-black/20 hover:bg-black/30 rounded-lg transition-all border border-white/20"
@@ -664,41 +692,8 @@ const ImageToPromptGenerator = ({authLoading }) => {
                       </>
                     )}
                   </button>
-                )}
-              </div>
-
-              {!user && !generatedPrompt && (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Lock className="w-10 h-10 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Sign in Required</h3>
-                  <p className="text-purple-200 mb-6 max-w-sm mx-auto">Please sign in to generate AI prompts from your images</p>
-                  <div className="space-y-3">
-                    <button className="block w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-[1.02]">
-                      Sign In
-                    </button>
-                    <button className="block w-full border-2 border-purple-400 text-purple-300 px-6 py-3 rounded-lg font-semibold hover:bg-purple-400/20 transition-all">
-                      Create Account
-                    </button>
-                  </div>
                 </div>
-              )}
 
-              {hasReachedLimit() && user && (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <AlertCircle className="w-10 h-10 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Limit Reached</h3>
-                  <p className="text-purple-200 mb-6 max-w-sm mx-auto">You've reached your {usage?.plan} plan limit. Upgrade to continue generating prompts.</p>
-                  <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-[1.02]">
-                    Upgrade Plan
-                  </button>
-                </div>
-              )}
-
-              {generatedPrompt ? (
                 <div className="space-y-4">
                   <div className="bg-black/30 rounded-lg p-4 border border-white/20">
                     <p className="text-white leading-relaxed whitespace-pre-wrap">
@@ -714,23 +709,65 @@ const ImageToPromptGenerator = ({authLoading }) => {
                     <strong className="text-blue-300">Pro Tip:</strong> Click the copy button to copy the entire prompt to your clipboard. You can then paste it directly into your AI art generator.
                   </div>
                 </div>
-              ) : user && !hasReachedLimit() && (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">✨</div>
-                  <h3 className="text-lg font-medium text-white mb-2">Ready to Generate</h3>
-                  <p className="text-purple-200">Your generated prompt will appear here...</p>
-                </div>
-              )}
 
-              {error && (
-                <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 flex items-center gap-3">
-                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                  <span>{error}</span>
-                </div>
-              )}
+                {error && (
+                  <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 flex items-center gap-3">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Error Display (when no prompt generated) */}
+        {error && !generatedPrompt && (
+          <div className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Placeholder states when no prompt generated */}
+        {!generatedPrompt && user && !hasReachedLimit() && (
+          <div className="mt-6 text-center py-12">
+            <div className="text-6xl mb-4">✨</div>
+            <h3 className="text-lg font-medium text-white mb-2">Ready to Generate</h3>
+            <p className="text-purple-200">Upload an image and click generate to create your AI prompt...</p>
+          </div>
+        )}
+
+        {!user && !generatedPrompt && (
+          <div className="mt-6 text-center py-12">
+            <div className="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-10 h-10 text-white" />
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-3">Sign in Required</h3>
+            <p className="text-purple-200 mb-6 max-w-sm mx-auto">Please sign in to generate AI prompts from your images</p>
+            <div className="space-y-3">
+              <button className="block w-full max-w-xs mx-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-[1.02]">
+                Sign In
+              </button>
+              <button className="block w-full max-w-xs mx-auto border-2 border-purple-400 text-purple-300 px-6 py-3 rounded-lg font-semibold hover:bg-purple-400/20 transition-all">
+                Create Account
+              </button>
             </div>
           </div>
-        </div>
+        )}
+
+        {hasReachedLimit() && user && !generatedPrompt && (
+          <div className="mt-6 text-center py-12">
+            <div className="w-20 h-20 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="w-10 h-10 text-white" />
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-3">Limit Reached</h3>
+            <p className="text-purple-200 mb-6 max-w-sm mx-auto">You've reached your {usage?.plan} plan limit. Upgrade to continue generating prompts.</p>
+            <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-[1.02]">
+              Upgrade Plan
+            </button>
+          </div>
+        )}
       </div>
 
       <style jsx>{`
@@ -754,7 +791,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
         }
       `}</style>
     </div>
-     
   );
 };
 

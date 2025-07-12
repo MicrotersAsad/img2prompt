@@ -5,8 +5,6 @@ import clientPromise from '../../../../lib/mongodb';
 
 export async function POST(request) {
   try {
-    console.log('API: Starting Azure DALL-E 3 image generation...');
-    
     // Get token from Authorization header
     const authHeader = request.headers.get('authorization');
     const token = authHeader?.replace('Bearer ', '');
@@ -28,12 +26,16 @@ export async function POST(request) {
 
     // Check subscription limits
     const { subscription } = user;
-    const imageLimit = getImageLimit(subscription.plan);
-    const imagesUsed = subscription.imagesUsed || 0;
-
-    if (subscription.plan !== 'lifetime' && imagesUsed >= imageLimit) {
+    if (subscription.plan === 'free' && subscription.promptsUsed >= subscription.promptsLimit) {
       return NextResponse.json(
-        { success: false, message: `${subscription.plan} plan limit reached. Please upgrade your plan.` },
+        { success: false, message: 'Free tier limit reached. Please upgrade your plan.' },
+        { status: 403 }
+      );
+    }
+
+    if (subscription.plan !== 'lifetime' && subscription.promptsUsed >= subscription.promptsLimit) {
+      return NextResponse.json(
+        { success: false, message: 'Monthly limit reached. Please upgrade or wait for next billing cycle.' },
         { status: 403 }
       );
     }
@@ -62,28 +64,17 @@ export async function POST(request) {
     // Generate images with Azure OpenAI DALL-E 3
     const generatedImages = await generateWithAzureDALLE(prompt, size, style, quality, n);
 
-    // Update user's image usage
+    // Update user's image usage without saving generation in DB
     const client = await clientPromise;
     const db = client.db('imgtoprompt');
     
     await db.collection('users').updateOne(
       { _id: user._id },
       { 
-        $inc: { 'subscription.imagesUsed': generatedImages.length },
+        $inc: { 'subscription.promptsUsed': generatedImages.length },
         $set: { updatedAt: new Date() }
       }
     );
-
-    // Save generation to history
-    await db.collection('generations').insertOne({
-      userId: user._id,
-      type: 'image',
-      prompt: prompt,
-      model: 'azure-dall-e-3',
-      settings: { size, style, quality, n },
-      images: generatedImages,
-      createdAt: new Date()
-    });
 
     console.log('API: Successfully generated images:', generatedImages.length);
 
@@ -91,8 +82,8 @@ export async function POST(request) {
       success: true,
       images: generatedImages,
       usage: {
-        used: imagesUsed + generatedImages.length,
-        limit: imageLimit,
+        used: subscription.promptsUsed + generatedImages.length,
+        limit: subscription.promptsLimit,
         plan: subscription.plan
       }
     });
@@ -132,7 +123,7 @@ async function generateWithAzureDALLE(prompt, size, style, quality, n) {
     quality: quality,
     style: style
   };
-console.log(requestBody);
+  console.log(requestBody);
 
   console.log('Azure DALL-E 3 request:', {
     url: url.replace(AZURE_CONFIG.apiKey, '[REDACTED]'),

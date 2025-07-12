@@ -6,16 +6,14 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import ImageToPromptGenerator from '../components/ImageToPromptGenerator';
-import ImgPromptGenerator from '../components/ImgPromptGenerator';
-import PromptToImageGenerator from '../components/PromptToImage';
-import Veo3Generator from '../components/Veo3Generator';
+
 
 export default function HomePage() {
   const { t } = useTranslation();
 
   return (
     <Layout>
-      <ImageToPromptGenerator/>
+      <ImageToPromptGenerator authLoading={undefined}/>
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
@@ -118,7 +116,7 @@ export default function HomePage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center text-sm text-purple-300">
             <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-            Azure OpenAI DALL-E 3
+             AI Powered Analysis
           </div>
             <Link  className="flex items-center text-blue-300 font-small" href="prompt-to-image">Try Now
             <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

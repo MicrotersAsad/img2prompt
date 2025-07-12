@@ -62,8 +62,8 @@ const PromptEnhancerTool = () => {
   useEffect(() => {
     if (user?.subscription) {
       setUsage({
-        used: user.subscription.enhancementsUsed || 0,
-        limit: user.subscription.enhancementsLimit || 10,
+        used: user.subscription.promptsUsed || 0,
+        limit: user.subscription.promptsLimit || 10,
         plan: user.subscription.plan || 'free'
       });
     }
