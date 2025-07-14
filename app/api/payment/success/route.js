@@ -66,7 +66,7 @@ export async function GET(request) {
           }
         }
       );
-
+///
       // Redirect to success page
       return NextResponse.redirect(
         new URL(`/payment/success?transaction_id=${transaction.transaction_id}&plan=${transaction.plan}`, request.url)

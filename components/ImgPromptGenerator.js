@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Lightbulb, Sparkles, Loader2, Copy, Check, AlertCircle, Lock, Globe, Camera, Palette, Wand2, Zap, Monitor, Smartphone, PaintBucket, Sun, Moon, Flame, Snowflake, TreePine, Building, User, Crown, Rocket, Heart, Star, Music } from 'lucide-react';
+import { Lightbulb, Sparkles, Loader2, Copy, Check, AlertCircle, Lock, Globe, Camera, Palette, Wand2, Zap, Monitor, Smartphone, PaintBucket, Sun, Moon, Flame, Snowflake, TreePine, Building, User, Crown, Rocket, Heart, Star, Music, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
-const ImgPromptGenerator = ({authLoading }) => {
+const ImgPromptGenerator = ({ authLoading }) => {
   const [concept, setConcept] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [usage, setUsage] = useState(null);
-  const {user}=useAuth()
+  const { user } = useAuth();
   // Settings
   const [artStyle, setArtStyle] = useState('realistic');
   const [mood, setMood] = useState('neutral');
@@ -22,6 +22,8 @@ const ImgPromptGenerator = ({authLoading }) => {
   const [language, setLanguage] = useState('english');
   const [detailLevel, setDetailLevel] = useState('medium');
   const [isCompact, setIsCompact] = useState(false);
+  // Accordion state for FAQ
+  const [openFaq, setOpenFaq] = useState(null);
 
   // Helper function to get auth token
   const getAuthToken = () => {
@@ -115,7 +117,7 @@ const ImgPromptGenerator = ({authLoading }) => {
   ];
 
   const languages = [
-    { value: 'english', label: 'English', flag: '�YTE' },
+    { value: 'english', label: 'English', flag: '🇺🇳' },
     { value: 'spanish', label: 'Spanish', flag: '🇪🇸' },
     { value: 'french', label: 'French', flag: '🇫🇷' },
     { value: 'german', label: 'German', flag: '🇩🇪' },
@@ -143,6 +145,34 @@ const ImgPromptGenerator = ({authLoading }) => {
     'Medieval castle on a cliff',
     'Phoenix rising from ashes',
     'Alien marketplace on distant planet'
+  ];
+
+  // FAQ data
+  const faqs = [
+    {
+      question: 'What is the Image Prompt Generator?',
+      answer: 'The Image Prompt Generator is a tool that helps you create detailed prompts for AI image generation platforms like Midjourney, DALL-E, or Stable Diffusion. You input a concept and customize settings like art style, mood, and lighting to generate a tailored prompt.'
+    },
+    {
+      question: 'Do I need an account to use this tool?',
+      answer: 'Yes, you need to sign in to generate prompts. This ensures your usage is tracked and you stay within your plan’s limits. You can sign in or create an account directly on the page.'
+    },
+    {
+      question: 'What are the usage limits?',
+      answer: 'Usage limits depend on your subscription plan (e.g., Free, Pro, or Lifetime). The Free plan has a limited number of prompts per month. Check your plan details or upgrade for higher limits.'
+    },
+    {
+      question: 'Can I use the generated prompts with any AI image generator?',
+      answer: 'Yes! The tool supports prompts optimized for platforms like Midjourney, DALL-E, Stable Diffusion, and Flux, or you can choose a general format that works across multiple platforms.'
+    },
+    {
+      question: 'How do I choose the right settings?',
+      answer: 'Experiment with different settings to match your vision. For example, choose “Realistic” for lifelike images or “Surreal” for dreamlike visuals. Use suggestions or adjust settings like mood and lighting to refine the output.'
+    },
+    {
+      question: 'What happens if I reach my prompt limit?',
+      answer: 'If you reach your limit, you’ll need to upgrade your plan or wait until your next billing cycle (for non-lifetime plans). Lifetime plan users have unlimited prompts.'
+    }
   ];
 
   const generatePrompt = async () => {
@@ -230,6 +260,10 @@ const ImgPromptGenerator = ({authLoading }) => {
     setConcept(suggestion);
   };
 
+  const toggleFaq = (index) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
@@ -244,7 +278,7 @@ const ImgPromptGenerator = ({authLoading }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="bg-white/10 backdrop-blur-lg border-b border-white/20">
-     
+        {/* Header content can go here if needed */}
       </div>
 
       <div className="max-w-7xl mx-auto p-4">
@@ -278,6 +312,8 @@ const ImgPromptGenerator = ({authLoading }) => {
           </div>
         )}
 
+
+
         <div className={`grid gap-6 ${isCompact ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-1'}`}>
           <div className="space-y-6">
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
@@ -308,141 +344,139 @@ const ImgPromptGenerator = ({authLoading }) => {
             </div>
 
             <div>
-  {/* Art Style Section */}
-<div>
-  {/* Art Style and Mood & Atmosphere Section */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-3">Art Style</h3>
-      <select
-        value={artStyle}
-        onChange={(e) => setArtStyle(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-      >
-        {artStyles.map((style) => (
-          <option key={style.id} value={style.id} className="bg-gray-800">
-            {style.label} - {style.description}
-          </option>
-        ))}
-      </select>
-    </div>
+              {/* Art Style and Mood & Atmosphere Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Art Style</h3>
+                  <select
+                    value={artStyle}
+                    onChange={(e) => setArtStyle(e.target.value)}
+                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+                  >
+                    {artStyles.map((style) => (
+                      <option key={style.id} value={style.id} className="bg-gray-800">
+                        {style.label} - {style.description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-3">Mood & Atmosphere</h3>
-      <select
-        value={mood}
-        onChange={(e) => setMood(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-      >
-        {moods.map((moodOption) => (
-          <option key={moodOption.id} value={moodOption.id} className="bg-gray-800">
-            {moodOption.label}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Mood & Atmosphere</h3>
+                  <select
+                    value={mood}
+                    onChange={(e) => setMood(e.target.value)}
+                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+                  >
+                    {moods.map((moodOption) => (
+                      <option key={moodOption.id} value={moodOption.id} className="bg-gray-800">
+                        {moodOption.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-  {/* Lighting and Composition Section */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-3">Lighting</h3>
-      <select
-        value={lighting}
-        onChange={(e) => setLighting(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-      >
-        {lightingOptions.map((option) => (
-          <option key={option.id} value={option.id} className="bg-gray-800">
-            {option.label} - {option.description}
-          </option>
-        ))}
-      </select>
-    </div>
+              {/* Lighting and Composition Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Lighting</h3>
+                  <select
+                    value={lighting}
+                    onChange={(e) => setLighting(e.target.value)}
+                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+                  >
+                    {lightingOptions.map((option) => (
+                      <option key={option.id} value={option.id} className="bg-gray-800">
+                        {option.label} - {option.description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-3">Composition</h3>
-      <select
-        value={composition}
-        onChange={(e) => setComposition(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-      >
-        {compositions.map((comp) => (
-          <option key={comp.id} value={comp.id} className="bg-gray-800">
-            {comp.label} - {comp.description}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Composition</h3>
+                  <select
+                    value={composition}
+                    onChange={(e) => setComposition(e.target.value)}
+                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+                  >
+                    {compositions.map((comp) => (
+                      <option key={comp.id} value={comp.id} className="bg-gray-800">
+                        {comp.label} - {comp.description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-  {/* Color Scheme and Target Platform Section */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-3">Color Scheme</h3>
-      <select
-        value={colorScheme}
-        onChange={(e) => setColorScheme(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-      >
-        {colorSchemes.map((scheme) => (
-          <option key={scheme.id} value={scheme.id} className="bg-gray-800">
-            {scheme.label} - {scheme.description}
-          </option>
-        ))}
-      </select>
-    </div>
+              {/* Color Scheme and Target Platform Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Color Scheme</h3>
+                  <select
+                    value={colorScheme}
+                    onChange={(e) => setColorScheme(e.target.value)}
+                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+                  >
+                    {colorSchemes.map((scheme) => (
+                      <option key={scheme.id} value={scheme.id} className="bg-gray-800">
+                        {scheme.label} - {scheme.description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-3">Target Platform</h3>
-      <select
-        value={promptTarget}
-        onChange={(e) => setPromptTarget(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-      >
-        {promptTargets.map((target) => (
-          <option key={target.id} value={target.id} className="bg-gray-800">
-            {target.label} - {target.description}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Target Platform</h3>
+                  <select
+                    value={promptTarget}
+                    onChange={(e) => setPromptTarget(e.target.value)}
+                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+                  >
+                    {promptTargets.map((target) => (
+                      <option key={target.id} value={target.id} className="bg-gray-800">
+                        {target.label} - {target.description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-  {/* Language and Detail Level Section */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-3">Language</h3>
-      <select
-        value={language}
-        onChange={(e) => setLanguage(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-      >
-        {languages.map((lang) => (
-          <option key={lang.value} value={lang.value} className="bg-gray-800">
-            {lang.flag} {lang.label}
-          </option>
-        ))}
-      </select>
-    </div>
+              {/* Language and Detail Level Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Language</h3>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+                  >
+                    {languages.map((lang) => (
+                      <option key={lang.value} value={lang.value} className="bg-gray-800">
+                        {lang.flag} {lang.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-      <h3 className="text-lg font-semibold text-white mb-3">Detail Level</h3>
-      <select
-        value={detailLevel}
-        onChange={(e) => setDetailLevel(e.target.value)}
-        className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
-      >
-        {detailLevels.map((level) => (
-          <option key={level.id} value={level.id} className="bg-gray-800">
-            {level.label} - {level.description}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
-</div>
-</div>
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <h3 className="text-lg font-semibold text-white mb-3">Detail Level</h3>
+                  <select
+                    value={detailLevel}
+                    onChange={(e) => setDetailLevel(e.target.value)}
+                    className="w-full p-3 bg-black/20 border border-purple-300/30 rounded-lg focus:ring-2 focus:ring-purple-500 text-white"
+                  >
+                    {detailLevels.map((level) => (
+                      <option key={level.id} value={level.id} className="bg-gray-800">
+                        {level.label} - {level.description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
             <button
               onClick={generatePrompt}
               disabled={isGenerating || !concept.trim() || !user || hasReachedLimit()}
@@ -562,6 +596,90 @@ const ImgPromptGenerator = ({authLoading }) => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+        {/* How to Use Section */}
+{/* How to Use Section */}
+<div className="mb-10 mt-10">
+  <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+    <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" aria-hidden="true" />
+    How to Use the Image Prompt Generator
+  </h2>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {/* Card 1: Sign In & Enter Concept */}
+    <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <User className="w-5 h-5 text-purple-400 animate-bounce" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-white">Get Started</h3>
+      </div>
+      <ol className="list-decimal list-inside space-y-3 text-purple-200 text-sm">
+        <li>
+          <span className="font-medium text-white">Sign In</span>: Log in to access the prompt generator. New users can create an account.
+        </li>
+        <li>
+          <span className="font-medium text-white">Enter a Concept</span>: Type your idea (e.g., "futuristic city at night") or pick a suggestion.
+        </li>
+      </ol>
+    </div>
+
+    {/* Card 2: Customize Settings & Generate Prompt */}
+    <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <Palette className="w-5 h-5 text-pink-400 animate-spin-slow" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-white">Customize & Generate</h3>
+      </div>
+      <ol className="list-decimal list-inside space-y-3 text-purple-200 text-sm">
+        <li>
+          <span className="font-medium text-white">Customize Settings</span>: Choose art style, mood, lighting, and more to tailor your prompt.
+        </li>
+        <li>
+          <span className="font-medium text-white">Generate Prompt</span>: Click "Generate Image Prompt" to create your prompt.
+        </li>
+      </ol>
+    </div>
+
+    {/* Card 3: Copy and Use */}
+    <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <Copy className="w-5 h-5 text-green-400 animate-bounce" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-white">Use Your Prompt</h3>
+      </div>
+      <ol className="list-decimal list-inside space-y-3 text-purple-200 text-sm">
+        <li>
+          <span className="font-medium text-white">Copy and Use</span>: Copy the generated prompt and paste it into an AI image generator (e.g., Midjourney, DALL-E).
+        </li>
+      </ol>
+      <p className="mt-3 text-purple-200 text-sm flex items-center gap-2">
+        <Star className="w-4 h-4 text-yellow-400 animate-pulse" aria-hidden="true" />
+        <strong>Tip:</strong> Experiment with settings to match your creative vision!
+      </p>
+    </div>
+  </div>
+</div>
+        {/* FAQ Section */}
+        <div className="mt-6 bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+          <h2 className="text-xl font-semibold text-white mb-4">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqs.map((faq, index) => (
+              <div key={index} className="border border-purple-300/30 rounded-lg">
+                <button
+                  onClick={() => toggleFaq(index)}
+                  className="w-full p-4 flex justify-between items-center text-left text-white hover:bg-purple-500/10 transition-all"
+                >
+                  <span className="font-medium">{faq.question}</span>
+                  {openFaq === index ? (
+                    <ChevronUp className="w-5 h-5 text-purple-300" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-purple-300" />
+                  )}
+                </button>
+                {openFaq === index && (
+                  <div className="p-4 bg-black/20 text-purple-200 text-sm">
+                    {faq.answer}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>

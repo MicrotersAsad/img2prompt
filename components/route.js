@@ -123,7 +123,7 @@ console.log(pipraPayConfig);
     console.log('Generated transaction ID:', tran_id);
 
     // Get base URL for callbacks
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000/';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://img2prompt-three.vercel.app/';
 
     // PipraPay payment data
     const paymentData = {
