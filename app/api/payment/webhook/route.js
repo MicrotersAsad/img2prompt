@@ -1,69 +1,36 @@
-// ✅ Secure and Complete PipraPay Webhook Handler with HMAC Signature Validation
-// ✅ Works with MongoDB and updates user subscription upon successful payment
-
 import { NextResponse } from 'next/server';
-import clientPromise from '../../../../lib/mongodb';
+import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import crypto from 'crypto';
-import { buffer } from 'micro';
-
-export const config = {
-  api: {
-    bodyParser: false, // Required for raw body (signature verification)
-  },
-};
 
 export async function POST(req) {
   try {
     console.log('🔔 PipraPay Webhook Received');
 
-    // Get raw request body
-    const rawBody = await buffer(req);
-    const rawBodyStr = rawBody.toString('utf8');
+    // Read raw body as buffer from request
+    const rawBody = await req.arrayBuffer();
+    const rawBodyStr = Buffer.from(rawBody).toString('utf-8');
 
-    // Validate Signature (if header and secret present)
-    const signature = req.headers['x-piprapay-signature'];
+    // Signature verification (if used)
+    const signature = req.headers.get('x-piprapay-signature');
     const secret = process.env.PIPRAPAY_WEBHOOK_SECRET;
 
     if (signature && secret) {
       const computed = crypto.createHmac('sha256', secret).update(rawBodyStr).digest('hex');
       if (!crypto.timingSafeEqual(Buffer.from(computed), Buffer.from(signature))) {
-        console.warn('❌ Invalid signature');
         return NextResponse.json({ success: false, message: 'Invalid signature' }, { status: 403 });
       }
     } else {
-      console.warn('⚠️ No signature verification used. Using fallback API key check.');
-
-      const receivedApiKey = req.headers['mh-piprapay-api-key'] || req.headers['Mh-Piprapay-Api-Key'] || req.headers['MH_PIPRAPAY_API_KEY'];
-      const expectedApiKey = process.env.PIPRAPAY_API_KEY;
-
-      if (!receivedApiKey || receivedApiKey !== expectedApiKey) {
-        console.error('❌ API key invalid or missing');
+      const apiKey = req.headers.get('mh-piprapay-api-key');
+      const expected = process.env.PIPRAPAY_API_KEY;
+      if (!apiKey || apiKey !== expected) {
         return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
       }
     }
 
-    // Parse JSON body
     const body = JSON.parse(rawBodyStr);
-    const {
-      pp_id,
-      customer_name,
-      customer_email_mobile,
-      payment_method,
-      amount,
-      fee = 0,
-      refund_amount = 0,
-      total = 0,
-      currency,
-      status,
-      date,
-      metadata = {},
-    } = body;
-console.log(body);
-
+    const { pp_id, customer_name, customer_email_mobile, payment_method, amount, fee = 0, refund_amount = 0, total = 0, currency, status, date, metadata = {} } = body;
     const transaction_id = metadata.transaction_id || body.transaction_id;
-console.log(transaction_id);
-
     if (!transaction_id || !status) {
       return NextResponse.json({ success: false, message: 'Missing transaction_id or status' }, { status: 400 });
     }
@@ -76,7 +43,6 @@ console.log(transaction_id);
       return NextResponse.json({ success: false, message: 'Transaction not found' }, { status: 404 });
     }
 
-    // Update transaction
     await db.collection('transactions').updateOne(
       { transaction_id },
       {
@@ -98,38 +64,31 @@ console.log(transaction_id);
       }
     );
 
-    console.log('✅ Transaction updated:', transaction_id);
-
-    if (["success", "completed"].includes(status.toLowerCase())) {
+    if (['success', 'completed'].includes(status.toLowerCase())) {
       const user = await db.collection('users').findOne({ _id: new ObjectId(transaction.user_id) });
-      if (!user) {
-        return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
-      }
-
-      const plan = transaction.plan || metadata.plan || 'free';
-      const billing = transaction.billing_cycle || metadata.billing_cycle || 'monthly';
-      const promptsLimit = getPromptsLimit(plan);
-      const endDate = calculateSubscriptionEnd(billing);
-
-      await db.collection('users').updateOne(
-        { _id: new ObjectId(transaction.user_id) },
-        {
-          $set: {
-            subscription: {
-              plan,
-              status: 'active',
-              promptsUsed: user.subscription?.promptsUsed || 0,
-              promptsLimit,
-              startDate: new Date(),
-              endDate,
-              billingCycle: billing,
+      if (user) {
+        const plan = transaction.plan || metadata.plan || 'free';
+        const billing = transaction.billing_cycle || metadata.billing_cycle || 'monthly';
+        const promptsLimit = getPromptsLimit(plan);
+        const endDate = calculateSubscriptionEnd(billing);
+        await db.collection('users').updateOne(
+          { _id: new ObjectId(transaction.user_id) },
+          {
+            $set: {
+              subscription: {
+                plan,
+                status: 'active',
+                promptsUsed: user.subscription?.promptsUsed || 0,
+                promptsLimit,
+                startDate: new Date(),
+                endDate,
+                billingCycle: billing,
+              },
+              updated_at: new Date(),
             },
-            updated_at: new Date(),
-          },
-        }
-      );
-
-      console.log('✅ Subscription updated:', user._id.toString());
+          }
+        );
+      }
     }
 
     return NextResponse.json({ success: true, message: 'Webhook processed' });
