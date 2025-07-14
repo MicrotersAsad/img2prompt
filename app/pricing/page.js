@@ -30,7 +30,7 @@ const PricingPage = () => {
     {
       name: 'Starter',
       description: 'Perfect for individuals getting started',
-      monthlyPrice: 999,
+      monthlyPrice: 10,
       yearlyPrice: 9990,
       features: [
         '50 AI prompts per month',
