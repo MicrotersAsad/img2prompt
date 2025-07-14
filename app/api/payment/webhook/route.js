@@ -99,7 +99,7 @@ export async function POST(req) {
 }
 
 function getPromptsLimit(plan) {
-  const limits = { free: 10, professional: 100, lifetime: Infinity };
+  const limits = { free: 10, Starter: 100, lifetime: Infinity };
   return limits[plan?.toLowerCase()] || 10;
 }
 
