@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-import { FileText,X, Shield, Sparkles, Crown, Calendar, Phone, Eye, Copy, Check } from 'lucide-react';
-
+import { FileText, X, Shield, Sparkles, Crown, Calendar, Phone, Eye, Copy, Check } from 'lucide-react';
 import BlogDashboard from './BlogDashboard';
 import { useAuth } from '@/hooks/useAuth';
+import Layout from './Layout';
 
 const DashboardClient = () => {
   const { user } = useAuth();
@@ -25,7 +24,11 @@ const DashboardClient = () => {
     status: 'active',
     promptsUsed: 0,
     promptsLimit: 10,
+    billingCycle: 'monthly',
+    startDate: new Date().toISOString(),
+    endDate: new Date().toISOString(),
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   });
 
   const tabs = [
@@ -43,6 +46,8 @@ const DashboardClient = () => {
         return 'from-purple-500 to-indigo-500';
       case 'lifetime':
         return 'from-yellow-500 to-orange-500';
+      case 'starter':
+        return 'from-blue-500 to-cyan-500';
       default:
         return 'from-gray-500 to-gray-700';
     }
@@ -54,6 +59,8 @@ const DashboardClient = () => {
         return <Sparkles className="w-10 h-10 text-purple-400" />;
       case 'lifetime':
         return <Crown className="w-10 h-10 text-yellow-400" />;
+      case 'starter':
+        return <Shield className="w-10 h-10 text-blue-400" />;
       default:
         return <Shield className="w-10 h-10 text-gray-400" />;
     }
@@ -98,7 +105,6 @@ const DashboardClient = () => {
           'Content-Type': 'application/json',
         },
       });
-console.log(response);
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -129,7 +135,7 @@ console.log(response);
     setError(null);
 
     try {
-      const token = getAuthToken();
+      const token = localStorage.getItem('auth-token');
       if (!token) {
         throw new Error('No authentication token found');
       }
@@ -165,12 +171,12 @@ console.log(response);
 
   const fetchUserSubscription = async () => {
     try {
-      const token = getAuthToken();
+      const token = localStorage.getItem('auth-token');
       if (!token) {
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch('/api/users/subscription', {
+      const response = await fetch('/api/auth/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -183,8 +189,18 @@ console.log(response);
       }
 
       const data = await response.json();
-      if (data.success) {
-        setSubscription(data.subscription);
+      if (data.success && data.user?.subscription) {
+        setSubscription({
+          plan: data.user.subscription.plan,
+          status: data.user.subscription.status,
+          promptsUsed: data.user.subscription.promptsUsed,
+          promptsLimit: data.user.subscription.promptsLimit,
+          billingCycle: data.user.subscription.billingCycle,
+          startDate: data.user.subscription.startDate,
+          endDate: data.user.subscription.endDate,
+          createdAt: data.user.createdAt,
+          updatedAt: data.user.subscription.updatedAt,
+        });
       }
     } catch (error) {
       console.error('Error fetching subscription:', error);
@@ -219,11 +235,12 @@ console.log(response);
   };
 
   return (
+    <Layout>
+
+
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-indigo-900 text-white p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
-
-       
 
         <div className="mb-8">
           <div className="flex flex-wrap gap-4">
@@ -426,7 +443,7 @@ console.log(response);
                   </table>
                 </div>
               ) : (
-                <div className="text-center py-8">
+                <div className="text-center ANTIALIASED">
                   <FileText className="w-12 h-12 text-purple-400 mx-auto mb-4" />
                   <p className="text-purple-200">No prompts generated yet</p>
                   <Link
@@ -483,6 +500,9 @@ console.log(response);
                   <h4 className="text-white font-semibold mb-2">Plan Details</h4>
                   <ul className="text-purple-200 text-sm space-y-1">
                     <li>• {subscription.promptsLimit} prompts per month</li>
+                    <li>• Billing Cycle: {subscription.billingCycle}</li>
+                    <li>• Start Date: {new Date(subscription.startDate).toLocaleDateString()}</li>
+                    <li>• End Date: {new Date(subscription.endDate).toLocaleDateString()}</li>
                     <li>• Advanced AI analysis</li>
                     <li>• Priority support</li>
                     {subscription.plan !== 'free' && <li>• Export capabilities</li>}
@@ -819,6 +839,7 @@ console.log(response);
         )}
       </div>
     </div>
+        </Layout>
   );
 };
 

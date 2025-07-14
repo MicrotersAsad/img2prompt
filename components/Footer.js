@@ -88,12 +88,12 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">
+                <Link href="/privacy-policy" className="hover:text-white transition-colors">
                   {t('privacyPolicy')}
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
+                <Link href="/terms-condition" className="hover:text-white transition-colors">
                   {t('termsOfService')}
                 </Link>
               </li>
