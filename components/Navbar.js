@@ -23,7 +23,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useAuth } from '@/hooks/useAuth';
-
+import logo from "./file.svg"
 const Navbar = () => {
   const { t, ready } = useTranslation();
   const { user, logout } = useAuth(); // Get logout function from useAuth
@@ -161,7 +161,10 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <Sparkles className="w-8 h-8 text-yellow-400 mr-2" />
+         <img src={logo.src} alt="Logo" className='w-16 h-5'/>
+
+
+
             <span className="text-xl font-bold text-white">
               {safeT('title', 'Image to Prompt')}
             </span>
