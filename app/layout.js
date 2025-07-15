@@ -72,7 +72,7 @@ export default function RootLayout({ children }) {
         <I18nProvider>
           {/* <WhatsAppButton/> */}
           <a
-  href="https://wa.me/8801234567890?text=Hi!%20I%20need%20help"
+  href="https://wa.me/8801706909724?text=Hi!%20I%20need%20help%20From%20img2prompt"
   target="_blank"
   rel="noopener noreferrer"
   className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg z-50 flex items-center justify-center"
