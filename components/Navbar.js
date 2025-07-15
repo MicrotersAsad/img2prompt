@@ -257,7 +257,7 @@ const Navbar = () => {
             </Link>
 
             {/* Language Switcher - only show on client */}
-            {isClient && <LanguageSwitcher />}
+            {/* {isClient && <LanguageSwitcher />} */}
 
             {/* User Authentication Section - SSR Safe */}
             {isClient && user ? (

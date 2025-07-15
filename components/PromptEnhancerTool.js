@@ -18,7 +18,10 @@ import {
   Eye,
   EyeOff,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  User,
+  Palette,
+  Star
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import Layout from './Layout';
@@ -32,7 +35,8 @@ const PromptEnhancerTool = () => {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [usage, setUsage] = useState(null);
-  
+    // Accordion state for FAQ
+    const [openFaq, setOpenFaq] = useState(null);
   // Enhancement settings
   const [enhancementStyle, setEnhancementStyle] = useState('professional');
   const [targetPlatform, setTargetPlatform] = useState('midjourney');
@@ -131,7 +135,36 @@ const PromptEnhancerTool = () => {
     "Vintage car on a road",
     "Abstract art with colors"
   ];
-
+ // FAQ data
+const faqs = [
+  {
+    question: 'What is the AI Prompt Enhancer?',
+    answer: 'The AI Prompt Enhancer is a tool designed to help you improve and expand your text prompts for use in AI applications like ChatGPT, Claude, or other generative tools. It takes a basic idea and enriches it with more detail, tone, structure, and context.'
+  },
+  {
+    question: 'Do I need an account to use this tool?',
+    answer: 'Yes, you need to sign in to enhance prompts. This helps track your usage and ensures you stay within your plan’s limits. You can sign in or create an account directly on the site.'
+  },
+  {
+    question: 'What are the usage limits?',
+    answer: 'Usage limits depend on your subscription plan (e.g., Free, Pro, or Lifetime). Free users get a limited number of enhancements per month. You can check your plan details or upgrade for more usage.'
+  },
+  {
+    question: 'Can I use the enhanced prompts with any AI tool?',
+    answer: 'Absolutely! The enhanced prompts are designed to work with various AI platforms including ChatGPT, Claude, Gemini, or any system that accepts structured prompts.'
+  },
+  {
+    question: 'How do I get the best enhancements?',
+    answer: 'Start with a clear and focused prompt. You can adjust tone (e.g., persuasive, casual), expand on ideas, or request specific formats like lists or summaries. Experiment with different enhancement options to get the best result.'
+  },
+  {
+    question: 'What happens if I reach my enhancement limit?',
+    answer: 'Once you reach your limit, you can either upgrade your plan for more enhancements or wait for the next billing cycle to reset your quota. Lifetime users have unlimited access.'
+  }
+];
+  const toggleFaq = (index) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
   // Add custom keyword
   const addCustomKeyword = () => {
     if (newKeyword.trim() && !customKeywords.includes(newKeyword.trim())) {
@@ -252,7 +285,10 @@ const PromptEnhancerTool = () => {
 
       <div className="max-w-7xl mx-auto p-4">
         <div>
-                <h1 className="text-2xl font-bold text-white">AI Prompt Enhancer</h1>
+                 <h1 className="text-3xl font-semibold text-white mb-4 flex items-center justify-center gap-2 text-center">
+    <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" aria-hidden="true" />
+    AI Prompt Enhancer
+  </h1>
                 <p className="text-orange-200 text-sm">Transform basic prompts into professional AI instructions</p>
               </div>
         {/* Usage Display */}
@@ -655,7 +691,91 @@ const PromptEnhancerTool = () => {
             </div>
           </div>
         </div>
+{/* How to Use Section */}
+<div className="mb-10 mt-10">
+ <h2 className="text-xl font-semibold text-white mb-4 flex items-center justify-center gap-2 text-center">
+  <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" aria-hidden="true" />
+  How to Use the Image Prompt Generator
+</h2>
 
+
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {/* Card 1: Sign In & Enter Concept */}
+    <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <User className="w-5 h-5 text-purple-400 animate-bounce" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-white">Get Started</h3>
+      </div>
+      <ol className="list-decimal list-inside space-y-3 text-purple-200 text-sm">
+        <li>
+          <span className="font-medium text-white">Sign In</span>: Log in to access the prompt generator. New users can create an account.
+        </li>
+        <li>
+          <span className="font-medium text-white">Enter a Concept</span>: Type your idea (e.g., "futuristic city at night") or pick a suggestion.
+        </li>
+      </ol>
+    </div>
+
+    {/* Card 2: Customize Settings & Generate Prompt */}
+    <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <Palette className="w-5 h-5 text-pink-400 animate-spin-slow" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-white">Customize & Generate</h3>
+      </div>
+      <ol className="list-decimal list-inside space-y-3 text-purple-200 text-sm">
+        <li>
+          <span className="font-medium text-white">Customize Settings</span>: Choose art style, mood, lighting, and more to tailor your prompt.
+        </li>
+        <li>
+          <span className="font-medium text-white">Generate Prompt</span>: Click "Generate Image Prompt" to create your prompt.
+        </li>
+      </ol>
+    </div>
+
+    {/* Card 3: Copy and Use */}
+    <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <Copy className="w-5 h-5 text-green-400 animate-bounce" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-white">Use Your Prompt</h3>
+      </div>
+      <ol className="list-decimal list-inside space-y-3 text-purple-200 text-sm">
+        <li>
+          <span className="font-medium text-white">Copy and Use</span>: Copy the generated prompt and paste it into an AI image generator (e.g., Midjourney, DALL-E).
+        </li>
+      </ol>
+      <p className="mt-3 text-purple-200 text-sm flex items-center gap-2">
+        <Star className="w-4 h-4 text-yellow-400 animate-pulse" aria-hidden="true" />
+        <strong>Tip:</strong> Experiment with settings to match your creative vision!
+      </p>
+    </div>
+  </div>
+</div>
+        {/* FAQ Section */}
+        <div className="mt-6 bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+          <h2 className="text-xl font-semibold text-white text-center mb-4">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqs.map((faq, index) => (
+              <div key={index} className="border border-purple-300/30 rounded-lg">
+                <button
+                  onClick={() => toggleFaq(index)}
+                  className="w-full p-4 flex justify-between items-center text-left text-white hover:bg-purple-500/10 transition-all"
+                >
+                  <span className="font-medium">{faq.question}</span>
+                  {openFaq === index ? (
+                    <ChevronUp className="w-5 h-5 text-purple-300" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-purple-300" />
+                  )}
+                </button>
+                {openFaq === index && (
+                  <div className="p-4 bg-black/20 text-purple-200 text-sm">
+                    {faq.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
         {/* Error Display */}
         {error && (
           <div className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 flex items-center gap-3">

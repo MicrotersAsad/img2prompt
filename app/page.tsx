@@ -134,7 +134,7 @@ export default function HomePage() {
             </svg>
           </div>
           <h3 className="text-xl font-semibold text-white group-hover:text-green-300 transition-colors">
-            Smart Prompt Generator
+            Image Prompt Generator
           </h3>
         </div>
         <p className="text-purple-200 mb-6 leading-relaxed">

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Loader2, Copy, Check, AlertCircle, Lock, Download, RefreshCw, Settings, Palette, X, Save, Sparkles } from 'lucide-react';
+import { Loader2, Copy, Check, AlertCircle, Lock, Download, RefreshCw, Settings, Palette, X, Save, Sparkles, User, Star, ChevronUp, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth'; // Import your useAuth hook
 import Layout from './Layout';
 
@@ -25,7 +25,8 @@ const PromptToImageGenerator = () => {
 
   // Modal state
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-
+  // Accordion state for FAQ
+  const [openFaq, setOpenFaq] = useState(null);
   // Temporary settings for modal (only applied when saved)
   const [tempImageSize, setTempImageSize] = useState(imageSize);
   const [tempImageStyle, setTempImageStyle] = useState(imageStyle);
@@ -165,6 +166,37 @@ const PromptToImageGenerator = () => {
       setIsGenerating(false);
     }
   };
+    // FAQ data
+const faqs = [
+  {
+    question: 'What is the Prompt to Image Generator?',
+    answer: 'It’s a tool that turns your written description into AI-generated images. Just enter a prompt, customize the style, and generate an image using platforms like Midjourney, DALL·E, or Stable Diffusion.'
+  },
+  {
+    question: 'Do I need an account to use this tool?',
+    answer: 'Yes, signing in is required to generate images. This lets us track your usage and apply your subscription limits appropriately.'
+  },
+  {
+    question: 'What are the usage limits?',
+    answer: 'Limits depend on your plan — Free, Pro, or Lifetime. Free users get a limited number of generations per month. Upgrade for more.'
+  },
+  {
+    question: 'Can I use the tool with any image generation platform?',
+    answer: 'Yes. The tool supports prompt formats for Midjourney, DALL·E, Stable Diffusion, Leonardo, Firefly, and more.'
+  },
+  {
+    question: 'How do I get better image results?',
+    answer: 'Use detailed prompts and experiment with styles like photorealistic or artistic. Try adding lighting, mood, or composition settings for improved results.'
+  },
+  {
+    question: 'What happens when I reach my image generation limit?',
+    answer: 'You’ll need to upgrade your plan or wait for your next billing cycle. Lifetime users enjoy unlimited generation access.'
+  }
+];
+
+    const toggleFaq = (index) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
 const openSettingsModal = () => {
   // Copy the current settings into temporary states
   setTempImageSize(imageSize);
@@ -240,6 +272,10 @@ console.log(generateImage);
   return (
    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="max-w-7xl mx-auto p-4">
+          <h1 className="text-3xl font-semibold text-white mb-4 flex items-center justify-center gap-2 text-center">
+    <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" aria-hidden="true" />
+    Prompt to Image Generator
+  </h1>
           {/* Usage Display */}
           {user && usage && (
             <div className="mb-6 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 rounded-xl p-4 border border-purple-500/20">
@@ -424,8 +460,97 @@ console.log(generateImage);
     </div>
   </div>
 )}
+    {/* How to Use Section */}
+{/* How to Use Section */}
+<div className="mb-10 mt-10">
+  <h2 className="text-xl font-semibold text-white mb-4 flex items-center justify-center gap-2 text-center">
+    <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" aria-hidden="true" />
+    How to Use the Prompt to Image Generator
+  </h2>
 
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {/* Step 1 */}
+    <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <User className="w-5 h-5 text-purple-400 animate-bounce" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-white">Step 1: Sign In & Enter Prompt</h3>
+      </div>
+      <ol className="list-decimal list-inside space-y-3 text-purple-200 text-sm">
+        <li>
+          <span className="font-medium text-white">Sign In</span>: Log in or register to access the tool.
+        </li>
+        <li>
+          <span className="font-medium text-white">Enter a Prompt</span>: Describe the image you want to generate (e.g., "a cat wearing sunglasses in Times Square").
+        </li>
+      </ol>
+    </div>
+
+    {/* Step 2 */}
+    <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <Palette className="w-5 h-5 text-pink-400 animate-spin-slow" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-white">Step 2: Customize Settings</h3>
+      </div>
+      <ol className="list-decimal list-inside space-y-3 text-purple-200 text-sm">
+        <li>
+          <span className="font-medium text-white">Select Style</span>: Choose between styles like photorealistic, artistic, minimal, or surreal.
+        </li>
+        <li>
+          <span className="font-medium text-white">Adjust Options</span>: Include mood, lighting, composition, and custom keywords.
+        </li>
+      </ol>
+    </div>
+
+    {/* Step 3 */}
+    <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="flex items-center gap-2 mb-3">
+        <Copy className="w-5 h-5 text-green-400 animate-bounce" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-white">Step 3: Generate & Use Image</h3>
+      </div>
+      <ol className="list-decimal list-inside space-y-3 text-purple-200 text-sm">
+        <li>
+          <span className="font-medium text-white">Generate</span>: Click “Generate Image” to convert your prompt into an image.
+        </li>
+        <li>
+          <span className="font-medium text-white">Download or Copy</span>: Save the image or copy the prompt to reuse in other tools.
+        </li>
+      </ol>
+      <p className="mt-3 text-purple-200 text-sm flex items-center gap-2">
+        <Star className="w-4 h-4 text-yellow-400 animate-pulse" aria-hidden="true" />
+        <strong>Tip:</strong> Try different styles to find your favorite result!
+      </p>
+    </div>
+  </div>
+</div>
+
+        {/* FAQ Section */}
+        <div className="mt-6 bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+          <h2 className="text-xl font-semibold text-white text-center mb-4">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqs.map((faq, index) => (
+              <div key={index} className="border border-purple-300/30 rounded-lg">
+                <button
+                  onClick={() => toggleFaq(index)}
+                  className="w-full p-4 flex justify-between items-center text-left text-white hover:bg-purple-500/10 transition-all"
+                >
+                  <span className="font-medium">{faq.question}</span>
+                  {openFaq === index ? (
+                    <ChevronUp className="w-5 h-5 text-purple-300" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-purple-300" />
+                  )}
+                </button>
+                {openFaq === index && (
+                  <div className="p-4 bg-black/20 text-purple-200 text-sm">
+                    {faq.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
+        </div>
+
         {showSettingsModal && (
   <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div className="bg-gradient-to-br from-slate-900 to-purple-900 rounded-2xl p-6 border border-white/20 shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -518,6 +643,7 @@ console.log(generateImage);
         </button>
       </div>
     </div>
+
   </div>
 )}
 

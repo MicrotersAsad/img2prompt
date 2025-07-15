@@ -282,6 +282,10 @@ const ImgPromptGenerator = ({ authLoading }) => {
       </div>
 
       <div className="max-w-7xl mx-auto p-4">
+         <h1 className="text-3xl font-semibold text-white mb-4 flex items-center justify-center gap-2 text-center">
+            <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" aria-hidden="true" />
+              Image  Prompt Generator
+          </h1>
         {user && usage && (
           <div className="mb-6 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 rounded-xl p-4 border border-purple-500/20">
             <div className="flex justify-between items-center">
@@ -598,13 +602,15 @@ const ImgPromptGenerator = ({ authLoading }) => {
             </div>
           </div>
         </div>
-        {/* How to Use Section */}
+       
 {/* How to Use Section */}
 <div className="mb-10 mt-10">
-  <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-    <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" aria-hidden="true" />
-    How to Use the Image Prompt Generator
-  </h2>
+ <h2 className="text-xl font-semibold text-white mb-4 flex items-center justify-center gap-2 text-center">
+  <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" aria-hidden="true" />
+  How to Use the Image Prompt Generator
+</h2>
+
+
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
     {/* Card 1: Sign In & Enter Concept */}
     <div className="bg-gradient-to-br from-purple-900/20 via-indigo-900/20 to-blue-900/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
@@ -658,7 +664,7 @@ const ImgPromptGenerator = ({ authLoading }) => {
 </div>
         {/* FAQ Section */}
         <div className="mt-6 bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
-          <h2 className="text-xl font-semibold text-white mb-4">Frequently Asked Questions</h2>
+          <h2 className="text-xl font-semibold text-white text-center mb-4">Frequently Asked Questions</h2>
           <div className="space-y-3">
             {faqs.map((faq, index) => (
               <div key={index} className="border border-purple-300/30 rounded-lg">
