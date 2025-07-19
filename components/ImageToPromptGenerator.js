@@ -1,21 +1,21 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Image, Loader2, Copy, Check, AlertCircle, Sparkles, Lock, Globe, Camera, Palette, Wand2, Zap, Clipboard, Link2, Monitor, Smartphone } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth'; // Import your useAuth hook
+import { Upload, Image, Loader2, Copy, Check, AlertCircle, Sparkles, Lock, Globe, Camera, Palette, Wand2, Zap, Clipboard, Link2, MessageSquareText, Lightbulb, TrendingUp } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import Layout from './Layout';
 
 // Image Preview Component
 const ImagePreview = ({ imagePreview, resetUpload }) => (
-  <div className="relative bg-black/20 rounded-lg p-2 border border-white/10">
+  <div className="relative bg-black/20 rounded-lg p-2 border border-white/10 h-64 flex items-center justify-center overflow-hidden">
     <img
       src={imagePreview}
       alt="Preview"
-      className="w-full max-h-64 object-contain rounded-lg"
+      className="max-h-full max-w-full object-contain rounded-lg"
     />
     <button
       onClick={resetUpload}
-      className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-all shadow-lg"
+      className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-all shadow-lg z-10"
     >
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -24,8 +24,37 @@ const ImagePreview = ({ imagePreview, resetUpload }) => (
   </div>
 );
 
+// Hero Section Component (Animations Removed)
+const HeroSection = () => (
+  <section className="text-center py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-800 to-pink-600 rounded-3xl shadow-2xl mb-12">
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+      
+         Image to <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-orange-400">Prompt</span>  Generator Online
+      </h1>
+      <p className="text-lg sm:text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+        Unleash your creativity. Our AI analyzes your image and generates detailed, optimized prompts for your favorite AI art models.
+      </p>
+      <div className="flex justify-center flex-wrap gap-4">
+        <div className="flex items-center text-white bg-white/20 px-4 py-2 rounded-full text-sm font-medium shadow-md">
+          <MessageSquareText className="w-4 h-4 mr-2" />
+          Detailed Descriptions
+        </div>
+        <div className="flex items-center text-white bg-white/20 px-4 py-2 rounded-full text-sm font-medium shadow-md">
+          <Lightbulb className="w-4 h-4 mr-2" />
+          Creative Ideas
+        </div>
+        <div className="flex items-center text-white bg-white/20 px-4 py-2 rounded-full text-sm font-medium shadow-md">
+          <TrendingUp className="w-4 h-4 mr-2" />
+          Optimized for AI
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+
 const ImageToPromptGenerator = ({authLoading }) => {
-  // Use the useAuth hook to get user data
   const { user} = useAuth();
   
   const [selectedImage, setSelectedImage] = useState(null);
@@ -35,19 +64,17 @@ const ImageToPromptGenerator = ({authLoading }) => {
   const [error, setError] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [usage, setUsage] = useState(null); // Track usage (used/limit/plan)
+  const [usage, setUsage] = useState(null);
   const [language, setLanguage] = useState('english');
   const [promptTarget, setPromptTarget] = useState('general');
   const [sceneStyle, setSceneStyle] = useState('general');
   const [wordCount, setWordCount] = useState(150);
   const [imageUrl, setImageUrl] = useState('');
   const [uploadMethod, setUploadMethod] = useState('file');
-  const [isCompact, setIsCompact] = useState(false);
 
   const fileInputRef = useRef(null);
   const pasteAreaRef = useRef(null);
 
-  // Helper function to get auth token from localStorage or cookies
   const getAuthToken = () => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('auth-token') || 
@@ -57,7 +84,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
     return null;
   };
 
-  // Set usage from user data when user changes
   useEffect(() => {
     if (user?.subscription) {
       setUsage({
@@ -68,7 +94,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
     }
   }, [user]);
 
-  // Check if user has reached their limit
   const hasReachedLimit = () => {
     if (!user || !usage) return false;
     if (usage.plan === 'lifetime') return false;
@@ -114,10 +139,8 @@ const ImageToPromptGenerator = ({authLoading }) => {
     { id: 'artistic', label: 'Artistic', icon: Wand2, description: 'Abstract and creative' },
   ];
 
-  // Enhanced paste functionality
   useEffect(() => {
     const handleGlobalPaste = async (e) => {
-      // Only work if we're on paste tab and no input is focused
       if (uploadMethod !== 'paste') return;
       if (document.activeElement?.tagName === 'INPUT' || 
           document.activeElement?.tagName === 'TEXTAREA') return;
@@ -142,7 +165,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
     return () => document.removeEventListener('paste', handleGlobalPaste);
   }, [uploadMethod]);
 
-  // Auto-focus paste area when paste tab is selected
   useEffect(() => {
     if (uploadMethod === 'paste' && pasteAreaRef.current) {
       setTimeout(() => {
@@ -172,7 +194,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
     reader.readAsDataURL(file);
 
     setSelectedImage(file);
-    setGeneratedPrompt(''); // Clear previous prompt
+    setGeneratedPrompt('');
   };
 
   const handleImageUrl = () => {
@@ -182,7 +204,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
     }
     setImagePreview(imageUrl);
     setSelectedImage({ url: imageUrl });
-    setGeneratedPrompt(''); // Clear previous prompt
+    setGeneratedPrompt('');
     setError('');
   };
 
@@ -196,13 +218,11 @@ const ImageToPromptGenerator = ({authLoading }) => {
   };
 
   const generatePrompt = async () => {
-    // Check if user is logged in
     if (!user) {
       setError('Please sign in to generate prompts');
       return;
     }
 
-    // Check if user has reached their limit
     if (hasReachedLimit()) {
       setError('You have reached your prompt generation limit. Please upgrade your plan.');
       return;
@@ -224,11 +244,9 @@ const ImageToPromptGenerator = ({authLoading }) => {
         return;
       }
 
-      // Debug logs
       console.log('User:', user);
       console.log('Token:', token ? token.substring(0, 20) + '...' : 'No token');
 
-      // Prepare image data
       let imageData;
       if (selectedImage?.url) {
         imageData = selectedImage.url;
@@ -240,7 +258,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
         });
       }
 
-      // Construct system prompt with settings
       const systemPrompt = `You are an AI that analyzes images and creates detailed, creative prompts for ${promptTarget.toUpperCase()} AI model in ${language}. The prompt should be approximately ${wordCount} words, optimized for ${sceneStyle} style. Provide rich descriptions including style, composition, lighting, colors, mood, and technical details.`;
 
       console.log('Sending request...');
@@ -266,7 +283,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
 
       if (data.success) {
         setGeneratedPrompt(data.prompt);
-        // Update local usage state
         setUsage(prev => ({
           ...prev,
           used: data.usage.used
@@ -299,7 +315,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
     }
   };
 
-  // Show loading state while auth is loading
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
@@ -314,6 +329,9 @@ const ImageToPromptGenerator = ({authLoading }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="max-w-7xl mx-auto p-4">
+        {/* Hero Section */}
+        <HeroSection />
+
         {/* Usage Display */}
         {user && usage && (
           <div className="mb-6 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 rounded-xl p-4 border border-purple-500/20">
@@ -349,14 +367,15 @@ const ImageToPromptGenerator = ({authLoading }) => {
           {/* Left Column - Input */}
           <div className="space-y-6">
             {/* Input Image Section */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
+            <div  className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl"
+  style={{ height: '600px' }} >
               <h2 className="text-xl font-semibold text-white mb-2">Input Image</h2>
               <p className="text-purple-200 text-sm mb-4">Upload an image, paste from clipboard, or provide an image URL</p>
               
               {/* Upload Method Toggle */}
               <div className="flex bg-black/20 rounded-lg p-1 mb-4">
                 <button
-                  onClick={() => setUploadMethod('file')}
+                  onClick={() => { setUploadMethod('file'); resetUpload(); }}
                   className={`flex-1 py-2 px-3 rounded-lg transition-all text-sm ${
                     uploadMethod === 'file' 
                       ? 'bg-purple-500 text-white shadow-lg' 
@@ -367,7 +386,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
                   Upload File
                 </button>
                 <button
-                  onClick={() => setUploadMethod('paste')}
+                  onClick={() => { setUploadMethod('paste'); resetUpload(); }}
                   className={`flex-1 py-2 px-3 rounded-lg transition-all text-sm ${
                     uploadMethod === 'paste' 
                       ? 'bg-purple-500 text-white shadow-lg' 
@@ -378,7 +397,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
                   Paste Image
                 </button>
                 <button
-                  onClick={() => setUploadMethod('url')}
+                  onClick={() => { setUploadMethod('url'); resetUpload(); }}
                   className={`flex-1 py-2 px-3 rounded-lg transition-all text-sm ${
                     uploadMethod === 'url' 
                       ? 'bg-purple-500 text-white shadow-lg' 
@@ -394,11 +413,11 @@ const ImageToPromptGenerator = ({authLoading }) => {
               {uploadMethod === 'file' ? (
                 !imagePreview ? (
                   <div
-                    className={`border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer ${
+                    className={`border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer h-64 flex flex-col items-center justify-center ${
                       isDragging 
                         ? 'border-purple-400 bg-purple-500/20' 
                         : 'border-purple-300/50 hover:border-purple-400 bg-black/20'
-                    }`}
+                    }` }style={{ height: '350px' }}
                     onDrop={handleDrop}
                     onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                     onDragLeave={() => setIsDragging(false)}
@@ -429,7 +448,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
                   <div
                     ref={pasteAreaRef}
                     tabIndex={0}
-                    className="border-2 border-dashed border-purple-300/50 rounded-xl p-8 text-center bg-black/20 hover:border-purple-400 transition-all focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    className="border-2 border-dashed border-purple-300/50 rounded-xl p-8 text-center bg-black/20 hover:border-purple-400 transition-all focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 h-64 flex flex-col items-center justify-center"
                     onPaste={async (e) => {
                       const items = e.clipboardData?.items;
                       if (!items) return;
@@ -468,7 +487,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
                   <ImagePreview imagePreview={imagePreview} resetUpload={resetUpload} />
                 )
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 h-64 flex flex-col justify-center">
                   <div className="relative">
                     <input
                       type="url"
@@ -494,9 +513,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
 
             {/* Settings */}
             <div className="space-y-6">
-              {/* Settings Grid - 2 columns */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Output Language */}
                 <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
                   <h3 className="text-lg font-semibold text-white mb-3">Output Language</h3>
                   <select
@@ -512,7 +529,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
                   </select>
                 </div>
 
-                {/* Word Count */}
                 <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
                   <h3 className="text-lg font-semibold text-white mb-4">Word Count</h3>
                   <div className="space-y-4">
@@ -533,9 +549,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
                 </div>
               </div>
 
-              {/* Settings Grid - 2 columns with Dropdowns */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Prompt Target */}
                 <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
                   <h3 className="text-lg font-semibold text-white mb-3">Prompt Target</h3>
                   <p className="text-sm text-purple-200 mb-4">Select the AI platform you're generating prompts for</p>
@@ -553,7 +567,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
                       ))}
                     </select>
                     
-                    {/* Custom dropdown arrow */}
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                       <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -561,7 +574,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
                     </div>
                   </div>
 
-                  {/* Selected Target Preview */}
                   {promptTarget && (
                     <div className="mt-4 p-3 bg-black/20 rounded-lg border border-purple-500/30">
                       <div className="flex items-center">
@@ -585,7 +597,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
                   )}
                 </div>
 
-                {/* Scene/Style */}
                 <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl">
                   <h3 className="text-lg font-semibold text-white mb-3">Scene/Style</h3>
                   <p className="text-sm text-purple-200 mb-4">Choose the type of content to optimize your prompt</p>
@@ -603,7 +614,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
                       ))}
                     </select>
                     
-                    {/* Custom dropdown arrow */}
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                       <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -611,7 +621,6 @@ const ImageToPromptGenerator = ({authLoading }) => {
                     </div>
                   </div>
 
-                  {/* Selected Style Preview */}
                   {sceneStyle && (
                     <div className="mt-4 p-3 bg-black/20 rounded-lg border border-purple-500/30">
                       <div className="flex items-center">
@@ -764,7 +773,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
             <h3 className="text-xl font-semibold text-white mb-3">Limit Reached</h3>
             <p className="text-purple-200 mb-6 max-w-sm mx-auto">You've reached your {usage?.plan} plan limit. Upgrade to continue generating prompts.</p>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-[1.02]">
-              Upgrade Plan
+                Upgrade Plan
             </button>
           </div>
         )}
