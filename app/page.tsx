@@ -432,7 +432,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">
-              {t('aiPromptGenerators', 'AI Prompt Generators')}
+              Related Tools
             </h2>
             <p className="text-purple-200 text-lg max-w-2xl mx-auto">
               {t('toolsDescription', 'Choose from our powerful AI tools to create professional prompts for different platforms')}
