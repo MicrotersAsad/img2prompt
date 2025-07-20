@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Upload, Image, Loader2, Copy, Check, AlertCircle, Sparkles, Lock, Globe, Camera, Palette, Wand2, Zap, Clipboard, Link2, MessageSquareText, Lightbulb, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import Layout from './Layout';
-import Herosection from "./Heresection"
+
 // Image Preview Component
 const ImagePreview = ({ imagePreview, resetUpload }) => (
   <div className="relative bg-black/20 rounded-lg p-2 border border-white/10 h-64 flex items-center justify-center overflow-hidden">
@@ -301,7 +301,7 @@ const ImageToPromptGenerator = ({authLoading }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Herosection/>
+    
       <div className="max-w-7xl mx-auto p-4">
         {/* Hero Section */}
       

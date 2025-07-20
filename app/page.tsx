@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout'; // Assuming Layout.js also has 'use client';
 import ImageToPromptGenerator from '../components/ImageToPromptGenerator';
-
+import Herosection from "../components/Heresection"
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -198,6 +198,7 @@ export default function HomePage() {
   return (
     <Layout>
       {/* ImageToPromptGenerator component */}
+        <Herosection/>
       <div className='max-w-10xl'>
         <ImageToPromptGenerator authLoading={undefined} t={t} />
       </div>
