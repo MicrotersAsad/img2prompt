@@ -204,7 +204,7 @@ export default function HomePage() {
 
       {/* ImageToPromptGenerator component */}
       <div className='max-w-10xl'>
-        <ImageToPromptGenerator authLoading={undefined} t={t} />
+        <ImageToPromptGenerator authLoading={undefined} />
       </div>
 
       {/* How It Works Section */}
