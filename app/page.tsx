@@ -1,29 +1,27 @@
+// app/page.tsx
 'use client';
 
 import React, { useState } from 'react';
-import { Sparkles, Zap, Shield, Globe, ArrowRight, Star, Users, Clock, Video, Image as ImageIcon, ChevronDown, UploadCloud, FileText, Wand, Lightbulb, TrendingUp, Brush } from 'lucide-react'; // Added Lightbulb, TrendingUp, Brush for Why Choose Us icons
+import { Sparkles, Zap, Shield, Globe, ArrowRight, Star, Users, Clock, Video, Image as ImageIcon, ChevronDown, UploadCloud, FileText, Wand, Lightbulb, TrendingUp, Brush } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import Layout from '../components/Layout';
+import Layout from '../components/Layout'; // Assuming Layout.js also has 'use client';
 import ImageToPromptGenerator from '../components/ImageToPromptGenerator';
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 // Import Swiper modules
-import { Navigation, Pagination, Autoplay, A11y } from 'swiper/modules';
+import { Autoplay, FreeMode } from 'swiper/modules'; // Import Autoplay and FreeMode
 
 // Import Swiper styles
 import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/autoplay';
-
+import 'swiper/css/free-mode'; // Required for FreeMode
 
 export default function HomePage() {
   const { t } = useTranslation();
 
-  // Sample testimonial data
+  // Sample testimonial data - increased for better rolling effect
   const testimonials = [
     {
       id: 1,
@@ -75,9 +73,63 @@ export default function HomePage() {
       userTitleKey: 'user5Title',
       userTitleDefault: 'Hobbyist Artist',
     },
+    {
+      id: 6,
+      stars: 5,
+      textKey: 'testimonial6',
+      textDefault: 'The best prompt generator out there. Highly recommend for any creative.',
+      userNameKey: 'user6Name',
+      userNameDefault: 'Ahmed Bilal',
+      userTitleKey: 'user6Title',
+      userTitleDefault: 'Game Developer',
+    },
+    {
+      id: 7,
+      stars: 5,
+      textKey: 'testimonial7',
+      textDefault: 'Incredible precision and speed. My design workflow has never been smoother.',
+      userNameKey: 'user7Name',
+      userNameDefault: 'Nadia Begum',
+      userTitleKey: 'user7Title',
+      userTitleDefault: 'UI/UX Designer',
+    },
+    {
+      id: 8,
+      stars: 5,
+      textKey: 'testimonial8',
+      textDefault: 'From concept to creation, this tool makes AI art truly accessible and enjoyable.',
+      userNameKey: 'user8Name',
+      userNameDefault: 'Kamal Hossain',
+      userTitleKey: 'user8Title',
+      userTitleDefault: 'Architect',
+    },
+    {
+      id: 9,
+      stars: 5,
+      textKey: 'testimonial9',
+      textDefault: 'The nuances captured by the AI are phenomenal. My art now stands out.',
+      userNameKey: 'user9Name',
+      userNameDefault: 'Lena Petrova',
+      userTitleKey: 'user9Title',
+      userTitleDefault: 'Illustrator',
+    },
+    {
+      id: 10,
+      stars: 5,
+      textKey: 'testimonial10',
+      textDefault: 'Absolutely indispensable for modern digital artists. A true game-changer.',
+      userNameKey: 'user10Name',
+      userNameDefault: 'Ivan Smirnov',
+      userTitleKey: 'user10Title',
+      userTitleDefault: '3D Modeler',
+    },
   ];
 
-  // FAQ Data - Now includes specific Image to Prompt questions
+  // Divide testimonials into two rows
+  const testimonialsRow1 = testimonials.slice(0, Math.ceil(testimonials.length / 2));
+  const testimonialsRow2 = testimonials.slice(Math.ceil(testimonials.length / 2));
+
+  // FAQ Data
   const faqs = [
     {
       id: 1,
@@ -88,52 +140,52 @@ export default function HomePage() {
     },
     {
       id: 2,
-      questionKey: 'faqImgPrompt1Question', // New key for Image to Prompt
+      questionKey: 'faqImgPrompt1Question',
       questionDefault: 'How accurate is the Image to Prompt generation?',
-      answerKey: 'faqImgPrompt1Answer',    // New key for Image to Prompt
-      answerDefault: 'Our **Image to Prompt AI generator** uses state-of-the-art AI to analyze your image\'s visual characteristics, including style, composition, lighting, and color palette. While accuracy can vary based on image complexity, it consistently provides highly relevant and detailed prompts, often capturing nuances you might miss.',
+      answerKey: 'faqImgPrompt1Answer',
+      answerDefault: 'Our Image to Prompt AI generator uses state-of-the-art AI to analyze your image\'s visual characteristics, including style, composition, lighting, and color palette. While accuracy can vary based on image complexity, it consistently provides highly relevant and detailed prompts, often capturing nuances you might miss.',
     },
     {
       id: 3,
-      questionKey: 'faqImgPrompt2Question', // New key for Image to Prompt
-      questionDefault: 'What image formats and sizes are supported for the **Image to Prompt generator online**?',
-      answerKey: 'faqImgPrompt2Answer',    // New key for Image to Prompt
+      questionKey: 'faqImgPrompt2Question',
+      questionDefault: 'What image formats and sizes are supported for the Image to Prompt generator online?',
+      answerKey: 'faqImgPrompt2Answer',
       answerDefault: 'You can upload common image formats such as JPG, PNG, and WEBP. We recommend keeping file sizes under 10MB for optimal performance, though our system is designed to handle various resolutions. We support direct file uploads, pasting from clipboard, and using image URLs.',
     },
     {
       id: 4,
-      questionKey: 'faqImgPrompt3Question', // New key for Image to Prompt
-      questionDefault: 'Can I specify the output language or AI model for the generated prompt using this **image to text prompt generator**?',
-      answerKey: 'faqImgPrompt3Answer',    // New key for Image to Prompt
-      answerDefault: 'Yes, absolutely! Before generating your prompt, you can choose from various output languages (e.g., English, Spanish, French) and specify the target AI model (e.g., Midjourney, DALL-E 3, Stable Diffusion, Flux AI) for tailored results from our **image to AI prompt generator online**.',
+      questionKey: 'faqImgPrompt3Question',
+      questionDefault: 'Can I specify the output language or AI model for the generated prompt using this image to text prompt generator?',
+      answerKey: 'faqImgPrompt3Answer',
+      answerDefault: 'Yes, absolutely! Before generating your prompt, you can choose from various output languages (e.g., English, Spanish, French) and specify the target AI model (e.g., Midjourney, DALL-E 3, Stable Diffusion, Flux AI) for tailored results from our image to AI prompt generator online.',
     },
     {
       id: 5,
-      questionKey: 'faq3Question', // Retained old FAQ, adjust ID as needed to keep unique
+      questionKey: 'faq3Question',
       questionDefault: 'Is my data secure and private?',
       answerKey: 'faq3Answer',
       answerDefault: 'Yes, absolutely. We prioritize your privacy and data security. All uploaded images and generated prompts are processed securely and are never shared with third parties without your explicit consent. We use industry-standard encryption protocols.',
     },
     {
       id: 6,
-      questionKey: 'faq4Question', // Retained old FAQ
+      questionKey: 'faq4Question',
       questionDefault: 'What AI models are supported for prompt generation?',
       answerKey: 'faq4Answer',
       answerDefault: 'Our platform generates prompts optimized for a wide range of popular AI models, including Midjourney, DALL-E 3, Stable Diffusion, and Flux. You can select your target model in the settings for tailored results.',
     },
     {
       id: 7,
-      questionKey: 'faq5Question', // Retained old FAQ
-      questionDefault: 'Do you offer a free trial or free plan for the **image to prompt AI free** feature?',
+      questionKey: 'faq5Question',
+      questionDefault: 'Do you offer a free trial or free plan for the image to prompt AI free feature?',
       answerKey: 'faq5Answer',
-      answerDefault: 'Yes, we offer a generous free plan that allows you to generate a limited number of prompts per month. This is perfect for trying out our **image to prompt free** feature. For more extensive usage, we offer various paid subscription tiers.',
+      answerDefault: 'Yes, we offer a generous free plan that allows you to generate a limited number of prompts per month. This is perfect for trying out our image to prompt free feature. For more extensive usage, we offer various paid subscription tiers.',
     },
     {
       id: 8,
-      questionKey: 'faq6Question', // Retained old FAQ
-      questionDefault: 'Can I enhance my existing prompts with the **best image to prompt generator**?',
+      questionKey: 'faq6Question',
+      questionDefault: 'Can I enhance my existing prompts with the best image to prompt generator?',
       answerKey: 'faq6Answer',
-      answerDefault: 'Our "Prompt Enhancer" tool is designed specifically for this purpose. You can input your basic prompt, and our AI will suggest additional keywords, styles, and technical parameters to make it more effective and detailed, solidifying our position as the **best image to prompt generator AI**.',
+      answerDefault: 'Our "Prompt Enhancer" tool is designed specifically for this purpose. You can input your basic prompt, and our AI will suggest additional keywords, styles, and technical parameters to make it more effective and detailed, solidifying our position as the best image to prompt generator AI.',
     },
   ];
 
@@ -146,9 +198,9 @@ export default function HomePage() {
   return (
     <Layout>
       {/* ImageToPromptGenerator component */}
-      <ImageToPromptGenerator authLoading={undefined} t={t} />
-
-  
+      <div className='max-w-10xl'>
+        <ImageToPromptGenerator authLoading={undefined} t={t} />
+      </div>
 
       {/* How It Works Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-indigo-900 to-purple-900">
@@ -157,7 +209,7 @@ export default function HomePage() {
             {t('howItWorksTitle', 'How Our Image to Prompt AI Generator Works')}
           </h2>
           <p className="text-purple-200 text-lg max-w-3xl mx-auto mb-16">
-            {t('howItWorksDescription', 'Transform your visuals into powerful AI art prompts in just a few simple steps with our **image to prompt AI generator**.')}
+            {t('howItWorksDescription', 'Transform your visuals into powerful AI art prompts in just a few simple steps with our image to prompt AI generator.')}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -168,7 +220,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-white mb-3">{t('step1Title', 'Upload Your Image')}</h3>
               <p className="text-purple-200 text-center leading-relaxed">
-                Start by uploading any image to our **image to prompt AI** tool. You can drag & drop, select a file, paste from your clipboard, or even use an image URL. It's a seamless experience for your **image to prompt free** generation.
+                Start by uploading any image to our image to prompt AI tool. You can drag & drop, select a file, paste from your clipboard, or even use an image URL. It's a seamless experience for your image to prompt free generation.
               </p>
             </div>
 
@@ -179,7 +231,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-white mb-3">{t('step2Title', 'AI Analyzes & Generates')}</h3>
               <p className="text-purple-200 text-center leading-relaxed">
-                Our advanced AI quickly processes your image, identifies key elements, styles, and moods. It then automatically crafts a detailed and optimized text prompt, making us the **best image to prompt generator** for your needs.
+                Our advanced AI quickly processes your image, identifies key elements, styles, and moods. It then automatically crafts a detailed and optimized text prompt, making us the best image to prompt generator for your needs.
               </p>
             </div>
 
@@ -190,11 +242,11 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold text-white mb-3">{t('step3Title', 'Copy Your Prompt & Create')}</h3>
               <p className="text-purple-200 text-center leading-relaxed">
-                Instantly copy the generated prompt and paste it into your favorite AI art tool (like Midjourney, DALL-E, Stable Diffusion, or **Flux AI image to prompt generator**). Watch your vision come to life with the perfect **image to AI prompt converter**.
+                Instantly copy the generated prompt and paste it into your favorite AI art tool (like Midjourney, DALL-E, Stable Diffusion, or Flux AI image to prompt generator). Watch your vision come to life with the perfect image to AI prompt converter.
               </p>
             </div>
           </div>
-          
+
           <div className="mt-16">
             <Link href="/img-to-prompt" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-2xl transition-all transform hover:scale-105 inline-flex items-center">
               {t('tryImageToPrompt', 'Try Image to Prompt Now')}
@@ -214,7 +266,7 @@ export default function HomePage() {
               {t('whyChooseUsTitle', 'Why Choose AI Prompt Studio\'s Image to Prompt?')}
             </h2>
             <p className="text-purple-200 text-lg max-w-3xl mx-auto">
-              {t('whyChooseUsDescription', 'Discover why our **image to prompt AI generator** is the preferred choice for artists and creators.')}
+              {t('whyChooseUsDescription', 'Discover why our image to prompt AI generator is the preferred choice for artists and creators.')}
             </p>
           </div>
 
@@ -223,50 +275,48 @@ export default function HomePage() {
             <div className="bg-gradient-to-br from-purple-900/50 to-indigo-900/50 p-8 rounded-2xl border border-purple-500/30">
               <Lightbulb className="w-12 h-12 text-yellow-400 mb-4" />
               <h3 className="text-xl font-semibold text-white mb-3">{t('benefit1Title', 'Unmatched Prompt Accuracy')}</h3>
-              <p className="text-purple-200">{t('benefit1Desc', 'Our **image to prompt ai** utilizes advanced AI to analyze intricate details, ensuring highly accurate and relevant text prompts for your creative vision.')}</p>
+              <p className="text-purple-200">{t('benefit1Desc', 'Our image to prompt ai utilizes advanced AI to analyze intricate details, ensuring highly accurate and relevant text prompts for your creative vision.')}</p>
             </div>
 
             {/* Benefit 2: Streamlined Workflow */}
             <div className="bg-gradient-to-br from-purple-900/50 to-indigo-900/50 p-8 rounded-2xl border border-purple-500/30">
               <TrendingUp className="w-12 h-12 text-green-400 mb-4" />
               <h3 className="text-xl font-semibold text-white mb-3">{t('benefit2Title', 'Streamlined Creative Workflow')}</h3>
-              <p className="text-purple-200">{t('benefit2Desc', 'Save hours of manual prompt engineering. Our **image to prompt generator online** quickly transforms your visuals, letting you focus on artistry.')}</p>
+              <p className="text-purple-200">{t('benefit2Desc', 'Save hours of manual prompt engineering. Our image to prompt generator online quickly transforms your visuals, letting you focus on artistry.')}</p>
             </div>
 
             {/* Benefit 3: Versatile Input */}
             <div className="bg-gradient-to-br from-purple-900/50 to-indigo-900/50 p-8 rounded-2xl border border-purple-500/30">
               <UploadCloud className="w-12 h-12 text-blue-400 mb-4" />
               <h3 className="text-xl font-semibold text-white mb-3">{t('benefit3Title', 'Versatile Input Options')}</h3>
-              <p className="text-purple-200">{t('benefit3Desc', 'Upload files, paste from clipboard, or use an image URL. Our **image to prompt extension** capability makes it easy to get started.')}</p>
+              <p className="text-purple-200">{t('benefit3Desc', 'Upload files, paste from clipboard, or use an image URL. Our image to prompt extension capability makes it easy to get started.')}</p>
             </div>
 
             {/* Benefit 4: AI Model Optimization */}
             <div className="bg-gradient-to-br from-purple-900/50 to-indigo-900/50 p-8 rounded-2xl border border-purple-500/30">
               <Zap className="w-12 h-12 text-pink-400 mb-4" />
               <h3 className="text-xl font-semibold text-white mb-3">{t('benefit4Title', 'Optimized for Top AI Models')}</h3>
-              <p className="text-purple-200">{t('benefit4Desc', 'Generate prompts specifically tuned for Midjourney, DALL-E 3, Stable Diffusion, and **Flux AI image to prompt generator**, ensuring superior results.')}</p>
+              <p className="text-purple-200">{t('benefit4Desc', 'Generate prompts specifically tuned for Midjourney, DALL-E 3, Stable Diffusion, and Flux AI image to prompt generator, ensuring superior results.')}</p>
             </div>
 
             {/* Benefit 5: Creativity Catalyst */}
             <div className="bg-gradient-to-br from-purple-900/50 to-indigo-900/50 p-8 rounded-2xl border border-purple-500/30">
               <Brush className="w-12 h-12 text-orange-400 mb-4" />
               <h3 className="text-xl font-semibold text-white mb-3">{t('benefit5Title', 'Ignite Your Creativity')}</h3>
-              <p className="text-purple-200">{t('benefit5Desc', 'Break through art blocks! Our **best image to prompt generator AI** transforms visual inspiration into detailed prompts, helping you explore new artistic frontiers.')}</p>
+              <p className="text-purple-200">{t('benefit5Desc', 'Break through art blocks! Our best image to prompt generator AI transforms visual inspiration into detailed prompts, helping you explore new artistic frontiers.')}</p>
             </div>
 
             {/* Benefit 6: Accessibility (Free Tier) */}
             <div className="bg-gradient-to-br from-purple-900/50 to-indigo-900/50 p-8 rounded-2xl border border-purple-500/30">
               <Shield className="w-12 h-12 text-yellow-400 mb-4" />
               <h3 className="text-xl font-semibold text-white mb-3">{t('benefit6Title', 'Accessible & Free Options')}</h3>
-              <p className="text-purple-200">{t('benefit6Desc', 'Start creating with our **image to prompt free** tier. Experience the power of our **image to prompt AI free** tool before upgrading for extended features.')}</p>
+              <p className="text-purple-200">{t('benefit6Desc', 'Start creating with our image to prompt free tier. Experience the power of our image to prompt AI free tool before upgrading for extended features.')}</p>
             </div>
           </div>
         </div>
       </section>
       {/* --- END Why Choose Us Section --- */}
 
-
-   
 
       {/* Features Section */}
       <section className="py-20 px-4 bg-black/20">
@@ -320,7 +370,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials Slider Section */}
+      {/* Testimonials Rolling Section (Two Rows) */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -329,60 +379,94 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <Swiper
-            modules={[Navigation, Pagination, Autoplay, A11y]}
-            spaceBetween={30}
-            slidesPerView={1}
-            navigation={{
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev',
-            }}
-            pagination={{ clickable: true }}
-            autoplay={{
-              delay: 5000,
-              disableOnInteraction: false,
-            }}
-            loop={true}
-            breakpoints={{
-              768: {
-                slidesPerView: 2,
-                spaceBetween: 30,
-              },
-              1024: {
-                slidesPerView: 3,
-                spaceBetween: 30,
-              },
-            }}
-            className="mySwiper !pb-10"
-          >
-            {testimonials.map((testimonial) => (
-              <SwiperSlide key={testimonial.id}>
-                <div className="bg-gradient-to-br from-purple-900/30 to-indigo-900/30 p-6 rounded-xl border border-purple-500/20 h-full flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center mb-4">
-                      {[...Array(testimonial.stars)].map((_, i) => (
-                        <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                      ))}
+          {/* First Row: Rolling from Right */}
+          {/* Added `overflow-hidden` to clip the content outside the container */}
+          {/* `hover:paused` class (defined in global CSS) to pause animation on hover */}
+          <div className="testimonial-row-container mb-8 overflow-hidden hover:paused">
+            <Swiper
+              modules={[Autoplay, FreeMode]}
+              spaceBetween={30}
+              slidesPerView={'auto'} // 'auto' to let slides define their width
+              loop={true}
+              autoplay={{
+                delay: 0, // No delay, continuous scroll
+                disableOnInteraction: false,
+                reverseDirection: false, // Scrolls from right to left
+              }}
+              freeMode={true} // Enables free movement of slides
+              speed={5000} // Duration of one loop cycle (adjust for speed)
+              className="mySwiper testimonials-row-1"
+            >
+              {testimonialsRow1.map((testimonial) => (
+                <SwiperSlide key={testimonial.id} style={{ width: '320px' }}> {/* Fixed width for consistency */}
+                  <div className="bg-gradient-to-br from-purple-900/30 to-indigo-900/30 p-6 rounded-xl border border-purple-500/20 h-full flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center mb-4">
+                        {[...Array(testimonial.stars)].map((_, i) => (
+                          <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                        ))}
+                      </div>
+                      <p className="text-purple-200 mb-4">
+                        {t(testimonial.textKey, testimonial.textDefault)}
+                      </p>
                     </div>
-                    <p className="text-purple-200 mb-4">
-                      {t(testimonial.textKey, testimonial.textDefault)}
-                    </p>
-                  </div>
-                  <div>
-                    <div className="text-white font-semibold">
-                      {t(testimonial.userNameKey, testimonial.userNameDefault)}
-                    </div>
-                    <div className="text-purple-300 text-sm">
-                      {t(testimonial.userTitleKey, testimonial.userTitleDefault)}
+                    <div>
+                      <div className="text-white font-semibold">
+                        {t(testimonial.userNameKey, testimonial.userNameDefault)}
+                      </div>
+                      <div className="text-purple-300 text-sm">
+                        {t(testimonial.userTitleKey, testimonial.userTitleDefault)}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-          
-         
-          
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+
+          {/* Second Row: Rolling from Left */}
+          {/* Added `overflow-hidden` and `hover:paused` */}
+          <div className="testimonial-row-container overflow-hidden hover:paused">
+            <Swiper
+              modules={[Autoplay, FreeMode]}
+              spaceBetween={30}
+              slidesPerView={'auto'}
+              loop={true}
+              autoplay={{
+                delay: 0,
+                disableOnInteraction: false,
+                reverseDirection: true, // Scrolls from left to right
+              }}
+              freeMode={true}
+              speed={5000} // Duration of one loop cycle (adjust for speed)
+              className="mySwiper testimonials-row-2"
+            >
+              {testimonialsRow2.map((testimonial) => (
+                <SwiperSlide key={testimonial.id} style={{ width: '320px' }}> {/* Fixed width for consistency */}
+                  <div className="bg-gradient-to-br from-purple-900/30 to-indigo-900/30 p-6 rounded-xl border border-purple-500/20 h-full flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center mb-4">
+                        {[...Array(testimonial.stars)].map((_, i) => (
+                          <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                        ))}
+                      </div>
+                      <p className="text-purple-200 mb-4">
+                        {t(testimonial.textKey, testimonial.textDefault)}
+                      </p>
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold">
+                        {t(testimonial.userNameKey, testimonial.userNameDefault)}
+                      </div>
+                      <div className="text-purple-300 text-sm">
+                        {t(testimonial.userTitleKey, testimonial.userTitleDefault)}
+                      </div>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </div>
       </section>
 
@@ -427,7 +511,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-   {/* Main AI Tool Section */}
+      {/* Main AI Tool Section */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -515,7 +599,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Video to Prompt Tool */}
+            {/* Video to Prompt Tool - CORRECTED LINK */}
             <div className="group relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-4">
@@ -533,14 +617,14 @@ export default function HomePage() {
                   <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
                   Coming Soon
                 </div>
-                <div className="flex items-center text-red-300 font-medium">
-                  Preview
+                {/* Corrected Link component */}
+                <Link className="flex items-center text-red-300 font-medium" href="#">Preview
                   <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                </div>
+                </Link> {/* Closing Link tag added */}
               </div>
             </div>
 
-            {/* Audio to Prompt Tool */}
+            {/* Audio to Prompt Tool - CORRECTED LINK */}
             <div className="group relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mr-4">
@@ -558,10 +642,10 @@ export default function HomePage() {
                   <span className="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span>
                   Coming Soon
                 </div>
-                <div className="flex items-center text-indigo-300 font-medium">
-                  Preview
+                {/* Corrected Link component */}
+                <Link className="flex items-center text-indigo-300 font-medium" href="#">Preview
                   <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                </div>
+                </Link> {/* Closing Link tag added */}
               </div>
             </div>
 
@@ -616,19 +700,8 @@ export default function HomePage() {
             top: 50%;
             transform: translateY(-50%);
             z-index: 10;
+            display: none; /* Hide default Swiper navigation buttons if not needed for continuous scroll */
         }
-
-        .swiper-button-prev { left: 10px; }
-        .swiper-button-next { right: 10px; }
-
-        .swiper-button-prev:hover,
-        .swiper-button-next:hover { background-color: rgba(139, 92, 246, 1); }
-        
-        .swiper-button-prev::after,
-        .swiper-button-next::after { font-size: 1.2rem !important; }
-
-        .swiper-button-prev.swiper-button-disabled,
-        .swiper-button-next.swiper-button-disabled { opacity: 0.3; cursor: not-allowed; }
 
         .swiper-pagination-bullet { background-color: rgba(255, 255, 255, 0.4); opacity: 1; }
         .swiper-pagination-bullet-active { background-color: #ec4899; }
@@ -647,6 +720,33 @@ export default function HomePage() {
         .animate-fade-in-down {
           animation: fade-in-down 0.3s ease-out forwards;
         }
+
+        /* --- Continuous Rolling Animations for Testimonials --- */
+
+        /* Container for each testimonial row to control overflow and mask */
+        .testimonial-row-container {
+            position: relative;
+            width: 100%;
+            /* Mask to fade out content at the edges */
+            mask-image: linear-gradient(to right,
+              hsl(0 0% 0% / 0),
+              hsl(0 0% 0% / 1) 20%,
+              hsl(0 0% 0% / 1) 80%,
+              hsl(0 0% 0% / 0)
+            );
+        }
+
+        /* Ensure smooth, linear transition for continuous scroll */
+        .swiper-wrapper {
+          transition-timing-function: linear !important;
+          -webkit-transition-timing-function: linear !important;
+        }
+
+        /* Pause animation on hover for the entire row container */
+        .testimonial-row-container:hover .swiper-wrapper {
+            animation-play-state: paused;
+        }
+
       `}</style>
     </Layout>
   );
