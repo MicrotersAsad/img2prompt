@@ -7,7 +7,8 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout'; // Assuming Layout.js also has 'use client';
 import ImageToPromptGenerator from '../components/ImageToPromptGenerator';
-import Herosection from "../components/Heresection"
+import HeroSection from "../components/Heresection"; // Corrected import: Herosection to HeroSection
+
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -189,16 +190,19 @@ export default function HomePage() {
     },
   ];
 
-  const [openFaq, setOpenFaq] = useState(null); // State to manage which FAQ is open
+  const [openFaq, setOpenFaq] = useState<number | null>(null); // State to manage which FAQ is open, explicitly typed
 
-  const toggleFaq = (id) => {
+  // Corrected: Added type annotation for 'id'
+  const toggleFaq = (id: number) => {
     setOpenFaq(openFaq === id ? null : id);
   };
 
   return (
     <Layout>
+      {/* HeroSection component added */}
+      <HeroSection />
+
       {/* ImageToPromptGenerator component */}
-        <Herosection/>
       <div className='max-w-10xl'>
         <ImageToPromptGenerator authLoading={undefined} t={t} />
       </div>
@@ -600,7 +604,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Video to Prompt Tool - CORRECTED LINK */}
+            {/* Video to Prompt Tool */}
             <div className="group relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-4">
@@ -618,14 +622,13 @@ export default function HomePage() {
                   <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
                   Coming Soon
                 </div>
-                {/* Corrected Link component */}
                 <Link className="flex items-center text-red-300 font-medium" href="#">Preview
                   <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                </Link> {/* Closing Link tag added */}
+                </Link>
               </div>
             </div>
 
-            {/* Audio to Prompt Tool - CORRECTED LINK */}
+            {/* Audio to Prompt Tool */}
             <div className="group relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mr-4">
@@ -643,10 +646,9 @@ export default function HomePage() {
                   <span className="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span>
                   Coming Soon
                 </div>
-                {/* Corrected Link component */}
                 <Link className="flex items-center text-indigo-300 font-medium" href="#">Preview
                   <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                </Link> {/* Closing Link tag added */}
+                </Link>
               </div>
             </div>
 
@@ -748,6 +750,7 @@ export default function HomePage() {
             animation-play-state: paused;
         }
 
+      
       `}</style>
     </Layout>
   );
